@@ -1,5 +1,4 @@
 package Game;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -13,6 +12,8 @@ public class Server extends Thread implements Runnable {
 	static BufferedReader inFromClient;
 	static PrintWriter serverPrintOut;
 	static int connectionnumber=0;
+	
+	
 	public Server(Socket s) {
 		socket = s;
 		try {
@@ -28,9 +29,11 @@ public class Server extends Thread implements Runnable {
 	}
 
 	public static void main(String args[]) throws Exception {
-		ServerSocket ss = new ServerSocket(3333);		
+		ServerSocket ss = new ServerSocket(3333);	
+		CollectFourDatabase database = new CollectFourDatabase();
+		database.getConnection();
 
-		for (connectionnumber = 0; connectionnumber < 4; connectionnumber++) {
+		for (connectionnumber = 0; connectionnumber < 1000; connectionnumber++) {
 			Socket s = null;
 			try {
 				s = ss.accept();
