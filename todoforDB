@@ -1,0 +1,14 @@
+	private final String userName = "root"; // enter user name for DB connection
+	private final String password = "123"; // enter password for DB connection
+	private final String serverName = "localhost";
+	private final int portNumber = 3306;
+	private final String dbName = "test"; // the name of the database file
+
+	public Connection getConnection() throws SQLException {
+		Connection conn = null;
+		Properties connectionProps = new Properties();
+		connectionProps.put("user", this.userName);
+		connectionProps.put("password", this.password);
+		conn = DriverManager.getConnection("jdbc:mysql://" + this.serverName + ":" + this.portNumber + "/" + this.dbName, connectionProps);
+		return conn;
+	}
