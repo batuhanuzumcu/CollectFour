@@ -9,11 +9,13 @@ import java.net.UnknownHostException;
 import java.util.Scanner;
 
 public class Client implements Runnable  {
+	Scanner input = new Scanner(System.in);
 
 	static Socket clientSocket = null; // The client socket
 	static PrintWriter os = null; // The output stream
 	static BufferedReader inFromServer = null; // The input stream
 	static Scanner inputforIP = new Scanner(System.in); // to get connection IP from user
+	private String choice;
 	
 	public static void main(String[] args) {
 
@@ -24,6 +26,7 @@ public class Client implements Runnable  {
 		System.out.print("Hello! Please enter the ip of the host: ");
 		host = inputforIP.nextLine();
 		System.out.println("");
+		
 
 		// Open a socket on a given host and port. Open input and output streams
 		try {
@@ -45,5 +48,9 @@ public class Client implements Runnable  {
 	@Override
 	public void run() {
 		System.out.println("the run of client is called");
+		System.out.println("***Hello!***");
+		System.out.println("If you want to register press 1");
+		System.out.println("If you want to login press 2");
+		choice = input.nextLine();
 	}
 }
