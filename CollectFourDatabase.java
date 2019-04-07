@@ -14,6 +14,7 @@ public class CollectFourDatabase {
 	private String username;
 	private String userPassword;
 	
+	//Registration for Users
 	public boolean RegisterData() {
 		System.out.println("Please enter your user name: ");
 		username = input.nextLine();
@@ -34,7 +35,8 @@ public class CollectFourDatabase {
 					"jdbc:mysql://localhost:3306/collectfour?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Turkey");
 			s = conn.createStatement();
 			
-			String sql = "INSERT INTO registration " + "(username,password) " + "VALUES ('" + username + "','"
+			//SQL INSERT
+			String sql = "INSERT INTO users " + "(username,password) " + "VALUES ('" + username + "','"
 					+ userPassword + "')";
 			s.execute(sql);
 			status = true;
@@ -56,5 +58,27 @@ public class CollectFourDatabase {
 		
 		
 	}
+	
+	//Login
+	public boolean Login() {
+		 try{           
+		      // Class.forName("com.mysql.jdbc.Driver");  // MySQL database connection
+		       Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/collectfour?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Turkey");     
+		       PreparedStatement pst = conn.prepareStatement("Select * from users where username=? and password=?");
+		       pst.setString(1, userName); 
+		       pst.setString(2, userPassword);
+		       ResultSet rs = pst.executeQuery();                        
+		       if(rs.next())            
+		           return true;    
+		       else
+		           return false;            
+		   }
+		   catch(Exception e){
+		       e.printStackTrace();
+		       return false;
+		   }       
+		} 
+		
+	
 
 }
