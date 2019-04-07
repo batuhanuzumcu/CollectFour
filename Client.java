@@ -8,19 +8,19 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
-public class Client implements Runnable {
-	Scanner input = new Scanner(System.in);
+public class Client implements Runnable  {
+	
 
 	static Socket clientSocket = null; // The client socket
 	static PrintWriter os = null; // The output stream
 	static BufferedReader inFromServer = null; // The input stream
+	static BufferedReader toServer = null;
 	static Scanner inputforIP = new Scanner(System.in); // to get connection IP from user
-	private String choice;
-	private int option;
-
+	static private String choice;
+	
 	public static void main(String[] args) {
 
-		int portNumber = 3306;
+		int portNumber = 3333;
 		String host = "localhost";
 
 		System.out.print("Hello! Please enter the ip of the host: ");
@@ -41,19 +41,29 @@ public class Client implements Runnable {
 			// time to start the thread
 			new Thread(new Client()).start();
 		}
-
+		
+		System.out.println("***Hello!***");
+		System.out.println("If you want to register press 1");
+		System.out.println("If you want to login press 2");
+		choice = inputforIP.nextLine();
+		try {
+			clientSocket = new Socket(host, portNumber);
+			inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+			os=new PrintWriter(clientSocket.getOutputStream(), true);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+	
 	}// end of main
 
 	@Override
 	public void run() {
-		CollectFourDatabase cfd = new CollectFourDatabase();
-
-		System.out.println("Press 1 to Login,Press 2 to register");
-		option = input.nextInt();
-
-		if (option == 2)
-			cfd.RegisterData();
-
+		//System.out.println("the run of client is called");
+		
+	
+	
 	}
-
 }
