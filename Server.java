@@ -31,7 +31,7 @@ public class Server extends Thread implements Runnable {
 	public static void main(String args[]) throws Exception {
 		ServerSocket ss = new ServerSocket(3333);	
 		CollectFourDatabase database = new CollectFourDatabase();
-		database.getConnection();
+		database.RegisterData();
 
 		for (connectionnumber = 0; connectionnumber < 1000; connectionnumber++) {
 			Socket s = null;
