@@ -8,7 +8,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
-public class Client implements Runnable  {
+public class Client implements Runnable {
 	Scanner input = new Scanner(System.in);
 
 	static Socket clientSocket = null; // The client socket
@@ -16,17 +16,16 @@ public class Client implements Runnable  {
 	static BufferedReader inFromServer = null; // The input stream
 	static Scanner inputforIP = new Scanner(System.in); // to get connection IP from user
 	private String choice;
-	
+	private int option;
+
 	public static void main(String[] args) {
 
-		int portNumber = 3333;
+		int portNumber = 3306;
 		String host = "localhost";
 
-		
 		System.out.print("Hello! Please enter the ip of the host: ");
 		host = inputforIP.nextLine();
 		System.out.println("");
-		
 
 		// Open a socket on a given host and port. Open input and output streams
 		try {
@@ -47,10 +46,14 @@ public class Client implements Runnable  {
 
 	@Override
 	public void run() {
-		System.out.println("the run of client is called");
-		System.out.println("***Hello!***");
-		System.out.println("If you want to register press 1");
-		System.out.println("If you want to login press 2");
-		choice = input.nextLine();
+		CollectFourDatabase cfd = new CollectFourDatabase();
+
+		System.out.println("Press 1 to Login,Press 2 to register");
+		option = input.nextInt();
+
+		if (option == 2)
+			cfd.RegisterData();
+
 	}
+
 }
