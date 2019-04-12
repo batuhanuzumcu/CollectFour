@@ -9,14 +9,11 @@ import java.net.UnknownHostException;
 import java.util.Scanner;
 
 public class Client implements Runnable  {
-	
 
 	static Socket clientSocket = null; // The client socket
 	static PrintWriter os = null; // The output stream
 	static BufferedReader inFromServer = null; // The input stream
-	static BufferedReader toServer = null;
-	static Scanner inputforIP = new Scanner(System.in); // to get connection IP from user
-	static private String choice;
+	static Scanner input = new Scanner(System.in); // to get connection IP from user
 	
 	public static void main(String[] args) {
 
@@ -24,7 +21,7 @@ public class Client implements Runnable  {
 		String host = "localhost";
 
 		System.out.print("Hello! Please enter the ip of the host: ");
-		host = inputforIP.nextLine();
+		host = input.nextLine();
 		System.out.println("");
 
 		// Open a socket on a given host and port. Open input and output streams
@@ -41,29 +38,26 @@ public class Client implements Runnable  {
 			// time to start the thread
 			new Thread(new Client()).start();
 		}
-		
-		System.out.println("***Hello!***");
-		System.out.println("If you want to register press 1");
-		System.out.println("If you want to login press 2");
-		choice = inputforIP.nextLine();
-		try {
-			clientSocket = new Socket(host, portNumber);
-			inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-			os=new PrintWriter(clientSocket.getOutputStream(), true);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		
-	
+
 	}// end of main
 
 	@Override
 	public void run() {
-		//System.out.println("the run of client is called");
 		
-	
-	
-	}
-}
+		System.out.println("Welcome please type in 1 to login or 2 to register: ");
+		int choice=input.nextInt();
+		input.nextLine();
+		
+		if(choice==1){
+
+			System.out.println("please enter your username: ");
+			String username=input.nextLine();
+			System.out.println("please enter your password: ");
+			String password=input.nextLine();
+			os.println(choice);
+			os.println(username);
+			os.println(password);
+		}
+		
+	}//end of run
+}//end of class
