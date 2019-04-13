@@ -1,4 +1,5 @@
 package Game;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -42,8 +43,8 @@ public class Client implements Runnable  {
 
 	}// end of main
 	
-	public void RoomMenu() {
-		
+	
+public void RoomMenuClientside() {
 		System.out.println("Welcome to the Lobby !");
 		System.out.println("Please type in 1 to JOIN A ROOM or 2 to CREATE A NEW ROOM: ");
 		int choice=input.nextInt();
@@ -51,49 +52,18 @@ public class Client implements Runnable  {
 		os.println(choice);
 		
 		if(choice==1) {
-			try{
-				serverRespond = inFromServer.readLine();
-				System.out.println(serverRespond);
-			
-				if(serverRespond.equals("successfully joined to room !"))//roomlar yaratılınca joined to" + RoomName gibi yaparız.
-				{
-					RoomMenu();
-					//stuff to do after joined room :D
-					}
-				else
-					System.exit(0);
-				
-			}catch(IOException e){
-				e.printStackTrace();
-			}
 		
 		}
 		else if(choice==2) {
-			try{
-				serverRespond = inFromServer.readLine();
-				System.out.println(serverRespond);
 			
-				if(serverRespond.equals("successfully joined to room !"))//roomlar yaratılınca joined to" + RoomName gibi yaparız.
-				{
-				
-					
-					//stuff to do after joined room :D
-					}
-				else
-					System.exit(0);
-				
-			}catch(IOException e){
-				e.printStackTrace();
-			}
-		
-		
 		}
+		
 	}
-
+	
 	@Override
 	public void run() {
 
-		System.out.println("**HELLO**");
+		System.out.println("***HELLO***");
 		System.out.println("Please type in 1 to LOGIN or 2 to REGISTER: ");
 		int choice=input.nextInt();
 		input.nextLine();
@@ -105,17 +75,16 @@ public class Client implements Runnable  {
 			System.out.println("please enter your username: ");
 			username=input.nextLine();
 			System.out.println("please enter your password: ");
-			password=input.nextLine();
+			String password=input.nextLine();
 			os.println(username);
 			os.println(password);
-			
 			
 			try{
 				serverRespond = inFromServer.readLine();
 				System.out.println(serverRespond);
 			
 				if(serverRespond.equals("successfully logged in to system!")){
-					RoomMenu();
+					RoomMenuClientside();
 					//stuff to do after logging in to see menu
 					//buraya yapılıcak :D
 				}
@@ -142,7 +111,7 @@ public class Client implements Runnable  {
 				System.out.println(serverRespond);
 				
 				if(serverRespond.equals("successfully registered!")){
-				
+					RoomMenuClientside();
 					//stuff to do after registering to see menu
 					//buraya yapılacak :D
 				}

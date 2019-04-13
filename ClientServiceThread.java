@@ -1,4 +1,5 @@
 package Game;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,9 +10,8 @@ class ClientServiceThread implements Runnable {
 
 	Socket socket;
 	BufferedReader inFromClient;
-	PrintWriter serverPrintOut;
+	PrintWriter serverPrintOut;	
 	CollectFourDB db;
-
 	ClientServiceThread(Socket s, CollectFourDB database) {
 		socket = s;
 		db = database;
@@ -21,10 +21,10 @@ class ClientServiceThread implements Runnable {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-	}
-
-	public void RoomMenu() {
+		}		
+	}	
+	
+	public void RoomMenuServerside() {
 
 		System.out.println("Welcome to the Lobby !");
 		try {
@@ -33,25 +33,12 @@ class ClientServiceThread implements Runnable {
 			// JOIN ROOM
 			if (clientChoice.equals("1")) {
 				System.out.println("it seems that joining operation is selected");
-				String Clientusername = inFromClient.readLine();
-				String Clientpassword = inFromClient.readLine();
-				String result = db.Login(Clientusername, Clientpassword);
-				if (result.equals("success")) {
-					serverPrintOut.println("successfully joined to room !");
-				}
 			}
 			// CREATE ROOM
 			else if (clientChoice.equals("2")) {
 				System.out.println("It seems that creating operation is selected");
-				String Clientusername = inFromClient.readLine();
-				String Clientpassword = inFromClient.readLine();
-				String result = db.RegisterData(Clientusername, Clientpassword);
-				if (result.equals("success")) {
-					serverPrintOut.println("successfully created a room!");
-				} else if (result.equals("fail")) {
-					serverPrintOut.println("fail");
-				}
-			} else
+			} 
+			else
 				System.out.println("Invalid choice has been entered.");
 
 		} // end of try
@@ -62,41 +49,46 @@ class ClientServiceThread implements Runnable {
 
 	
 	}
-
+	
 	public void run() {
 		System.out.println("it seems a client has connected! let's wait for him/her to login or register!");
 		try {
-			String clientChoice = inFromClient.readLine();
-
-			if (clientChoice.equals("1")) {
+			String clientChoice=inFromClient.readLine();
+			
+			if(clientChoice.equals("1")){
 				System.out.println("it seems that login operation is selected");
-				String Clientusername = inFromClient.readLine();
-				String Clientpassword = inFromClient.readLine();
-				String result = db.Login(Clientusername, Clientpassword);
-				if (result.equals("success")) {
-					serverPrintOut.println("successfully logged in to system!");
-					RoomMenu();
+				String Clientusername=inFromClient.readLine();
+				String Clientpassword=inFromClient.readLine();
+				String result=db.Login(Clientusername, Clientpassword);
+				if(result.equals("success")){
+					System.out.println("successfully logged in to system!");
+					RoomMenuServerside();
 				}
 			}
-			// REGISTER
-			else if (clientChoice.equals("2")) {
+			//REGISTER
+			else if(clientChoice.equals("2")) {
 				System.out.println("It seems that register operation is selected");
-				String Clientusername = inFromClient.readLine();
-				String Clientpassword = inFromClient.readLine();
-				String result = db.RegisterData(Clientusername, Clientpassword);
-				if (result.equals("success")) {
+				String Clientusername=inFromClient.readLine();
+				String Clientpassword=inFromClient.readLine();
+				String result=db.RegisterData(Clientusername,Clientpassword);
+				if(result.equals("success")) {
 					serverPrintOut.println("successfully registered!");
-				} else if (result.equals("fail")) {
-					serverPrintOut.println("fail");
-				}
-			} else
-				System.out.println("Invalid choice has been entered.");
+					RoomMenuServerside();
 
-		} // end of try
+				}
+				else if(result.equals("fail"))
+				{
+					serverPrintOut.println("failed to register!");	
+				}				
+			}
+			else
+				System.out.println("Invalid choice has been entered.");
+			
+		}//end of try
 		catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} // end of catch
-
-	}// end of run
-}// end of inner class
+		}//end of catch
+		
+	}//end of run
+   }//end of inner class
