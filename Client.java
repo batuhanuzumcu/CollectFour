@@ -1,4 +1,5 @@
 package Game;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -7,15 +8,15 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
-public class Client implements Runnable {
+public class Client implements Runnable  {
 
 	static Socket clientSocket = null; // The client socket
 	static PrintWriter os = null; // The output stream
 	static BufferedReader inFromServer = null; // The input stream
 	static Scanner input = new Scanner(System.in); // to get connection IP from user
-	String serverRespond=null; 
-	String username, password; // client name and password for login & register
-
+	String username, password;
+	String serverRespond = null;
+	static String serverConfirm=null; 
 	public static void main(String[] args) {
 
 		int portNumber = 3333;
@@ -47,63 +48,74 @@ public class Client implements Runnable {
 
 		System.out.println("***HELLO***");
 		System.out.println("Please type in 1 to LOGIN or 2 to REGISTER: ");
-		int choice = input.nextInt();
+		int choice=input.nextInt();
 		input.nextLine();
 		os.println(choice);
-		
-		//Request for login
-		if (choice == 1) 
-		{
 
-			System.out.println("Please enter your username: ");
-			username = input.nextLine();
-			System.out.println("Please enter your password: ");
-			password = input.nextLine();
+		//Request for login
+		if(choice==1){
+
+			System.out.println("please enter your username: ");
+			username=input.nextLine();
+			System.out.println("please enter your password: ");
+			String password=input.nextLine();
 			os.println(username);
 			os.println(password);
-			try {
-				serverRespond=inFromServer.readLine();
+			
+			try{
+				serverRespond = inFromServer.readLine();
 				System.out.println(serverRespond);
-			} catch (IOException e) {
+			
+				if(serverRespond.equals("successfully logged in to system!")){
+					
+					//stuff to do after logging in to see menu
+					//buraya yapılıcak :D
+				}
+				else
+					System.exit(0);
+				
+			}catch(IOException e){
 				e.printStackTrace();
 			}
-			
-		} 
+		}
+		
 		//Request for registration
 		else if (choice == 2) 
-			{
+		{
 			System.out.println("Please create a user name: ");
 			username = input.nextLine();
 			System.out.println("Please create a password: ");
 			password = input.nextLine();
 			os.println(username);
 			os.println(password);
-			try {
-				serverRespond=inFromServer.readLine();
+			
+			try{	
+				serverRespond = inFromServer.readLine();
 				System.out.println(serverRespond);
-			} catch (IOException e) {
+				
+				if(serverRespond.equals("successfully registered!")){
+				
+					//stuff to do after registering to see menu
+					//buraya yapılacak :D
+				}
+				else 
+					System.exit(0);
+				
+			}catch(IOException e){
 				e.printStackTrace();
 			}
-			
-			}
-		
+		}
 		else
 		{
-			try {
-				serverRespond=inFromServer.readLine();
+			try{
+				serverRespond = inFromServer.readLine();
 				System.out.println(serverRespond);
-			} catch (IOException e) {
+				System.exit(0);
+				
+			}catch(IOException e){
 				e.printStackTrace();
 			}
-			
 		}
-	
 		
-		
-	
-		
-		
-		
-		
-	}// end of run
-}// end of class
+	}//end of run
+}//end of class
