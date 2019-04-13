@@ -1,5 +1,4 @@
 package Game;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -7,7 +6,6 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.SQLException;
-
 
 
 public class Server extends Thread implements Runnable {
@@ -82,14 +80,11 @@ public class Server extends Thread implements Runnable {
 				else if(result.equals("fail"))
 				{
 					serverPrintOut.println("fail");
-					
 				}
-
-				
 			}
 			
 			else
-				System.out.println("Invalid choice has been entered.");
+				serverPrintOut.println("Invalid choice has been entered.");
 				
 			
 			
