@@ -1,5 +1,4 @@
 package Game;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -14,7 +13,7 @@ public class Client implements Runnable {
 	static PrintWriter os = null; // The output stream
 	static BufferedReader inFromServer = null; // The input stream
 	static Scanner input = new Scanner(System.in); // to get connection IP from user
-	static String serverConfirm=null; 
+	String serverRespond=null; 
 	String username, password; // client name and password for login & register
 
 	public static void main(String[] args) {
@@ -50,6 +49,7 @@ public class Client implements Runnable {
 		System.out.println("Please type in 1 to LOGIN or 2 to REGISTER: ");
 		int choice = input.nextInt();
 		input.nextLine();
+		os.println(choice);
 		
 		//Request for login
 		if (choice == 1) 
@@ -59,9 +59,14 @@ public class Client implements Runnable {
 			username = input.nextLine();
 			System.out.println("Please enter your password: ");
 			password = input.nextLine();
-			os.println(choice);
 			os.println(username);
 			os.println(password);
+			try {
+				serverRespond=inFromServer.readLine();
+				System.out.println(serverRespond);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			
 		} 
 		//Request for registration
@@ -71,16 +76,34 @@ public class Client implements Runnable {
 			username = input.nextLine();
 			System.out.println("Please create a password: ");
 			password = input.nextLine();
-			os.println(choice);
 			os.println(username);
 			os.println(password);
-		}
+			try {
+				serverRespond=inFromServer.readLine();
+				System.out.println(serverRespond);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			}
 		
 		else
 		{
-			os.println(choice);
+			try {
+				serverRespond=inFromServer.readLine();
+				System.out.println(serverRespond);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
 		}
+	
 		
-				
+		
+	
+		
+		
+		
+		
 	}// end of run
 }// end of class
