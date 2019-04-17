@@ -55,7 +55,21 @@ public void RoomMenuClientside() {
 		
 		}
 		else if(choice==2) {
-			
+			System.out.println("Please enter a name for the lobby ");
+			String namelobby = input.nextLine();
+			System.out.println("do you want to set a password for the lobby? Input 1 for yes anything else for no.");
+			String wantpassword = input.nextLine();
+			os.println(wantpassword);
+
+			if(wantpassword.equals("1")){
+				System.out.println("Please type in the password: ");
+				String passwordlobby = input.nextLine();
+				os.println(namelobby);
+				os.println(passwordlobby);
+			}
+			else{
+				os.println(namelobby);
+			}
 		}
 		
 	}
