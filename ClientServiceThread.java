@@ -5,18 +5,25 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 
 class ClientServiceThread implements Runnable {
 
+	String username;
 	Socket socket;
 	BufferedReader inFromClient;
 	PrintWriter serverPrintOut;
 	String lobbyname;
 	String lobbypass;
 	CollectFourDB db;
-	ClientServiceThread(Socket s, CollectFourDB database) {
+	ArrayList<ClientServiceThread> threads;
+	ArrayList<GameLobby> lobbies;
+	
+	ClientServiceThread(Socket s, CollectFourDB database, ArrayList<ClientServiceThread> threads,ArrayList<GameLobby> lobbies) {
 		socket = s;
 		db = database;
+		this.threads = threads;
+		this.lobbies = lobbies;
 		try {
 			inFromClient = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			serverPrintOut = new PrintWriter(socket.getOutputStream(), true);
@@ -25,6 +32,10 @@ class ClientServiceThread implements Runnable {
 			e.printStackTrace();
 		}		
 	}	
+	public void playername(){
+		System.out.println("The name of this player is: "+username);
+	}
+	
 	
 	public void RoomMenuServerside() {
 
@@ -35,26 +46,47 @@ class ClientServiceThread implements Runnable {
 			// JOIN ROOM
 			if (clientChoice.equals("1")) {
 				System.out.println("it seems that joining operation is selected");
-				
+				lobbyname = inFromClient.readLine();
+				for (int i = 0; i<lobbies.size() ; i++) {
+			        if (lobbies.get(i).getLobbyName().equals(lobbyname) ) {
+			            lobbies.get(i).Join(this);
+			            lobbies.get(i).CurrentPlayers();
+			            break;
+			          }
 			}
+				System.out.println("Correct lobby name! Time to test if the player list shows!");
+			}
+			
 			// CREATE ROOM
 			else if (clientChoice.equals("2")) {
 				System.out.println("It seems that creating operation is selected");
+				//buraya gelip patladı
 				clientChoice = inFromClient.readLine();
+				
 				if(clientChoice.equals("1")){
 					lobbyname = inFromClient.readLine();
 					lobbypass = inFromClient.readLine();
-					GameLobby lol = new GameLobby(lobbyname,lobbypass);
+					for (int i = 0; ; i++) {
+				        if (lobbies.get(i) == null) {
+				            lobbies.add(i, new GameLobby(lobbyname,lobbypass));
+				            lobbies.get(i).Join(this);
+				            break;
+				          }
+					}
 					System.out.println("Successfully created a lobby with password!");
 				}
-				else if(clientChoice.equals("2")){
+				
+				
+				else {
 					lobbyname = inFromClient.readLine();
-					GameLobby lolxd = new GameLobby(lobbyname);
-					System.out.println("Successfully created a lobby without password!");
-
+					for (int i = 0; ; i++) {
+				        if (lobbies.get(i) == null) {
+				            lobbies.add(i, new GameLobby(lobbyname));
+				            lobbies.get(i).Join(this);
+				            break;
+				          }
 				}
-				else{
-					System.out.println("you entered an incorrect choice!");
+					System.out.println("Successfully created a lobby without password!");
 				}
 
 			} 
@@ -80,7 +112,8 @@ class ClientServiceThread implements Runnable {
 				String Clientpassword=inFromClient.readLine();
 				String result=db.Login(Clientusername, Clientpassword);
 				if(result.equals("success")){
-					System.out.println("successfully logged in to system!");
+					username=Clientusername;
+					serverPrintOut.println("successfully logged in to system!");
 					RoomMenuServerside();
 				}
 			}
@@ -91,6 +124,7 @@ class ClientServiceThread implements Runnable {
 				String Clientpassword=inFromClient.readLine();
 				String result=db.RegisterData(Clientusername,Clientpassword);
 				if(result.equals("success")) {
+					username=Clientusername;
 					serverPrintOut.println("successfully registered!");
 					RoomMenuServerside();
 
