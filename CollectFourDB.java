@@ -12,7 +12,7 @@ public class CollectFourDB {
 	String arr = null; // We will use this string to execute queries
     String arr2 = null;
 	private final String userName = "root"; // enter user name for DB connection
-	private final String password = "123"; // enter password for DB connection
+	private final String password = "cancan563"; // enter password for DB connection
 	private final String serverName = "localhost";
 	private final int portNumber = 3306;
 	private final String dbName = "collectfour"; // the name of the database file

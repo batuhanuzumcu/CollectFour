@@ -52,10 +52,27 @@ public class Client implements Runnable  {
 		
 		if(choice==1) {
 			System.out.println("it seems you chose the join operation");
+			//System.out.println("Here are the lobbies that are currently open: ");
 			System.out.println("Please enter the name of the lobby you want to join:");
 			String joinname = input.nextLine();
-			System.out.println("Normally this will go with proper steps but for testing we will assume it only has a name!");
 			os.println(joinname);
+
+			try {
+				String lobbyhaspassword = inFromServer.readLine();
+				if(lobbyhaspassword.equals("no password")){
+		    		System.out.println("it seems that this lobby has no password! Joining to lobby now.");
+
+				}
+				else if(lobbyhaspassword.equals("has password")){
+		    		System.out.println("it seems that this lobby has a password!");
+		    		System.out.println( "Please enter the password to continue: ");
+		    		String joinpass = input.nextLine();
+		    		os.println(joinpass);
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		
 		}
 		else if(choice==2) {
@@ -75,7 +92,6 @@ public class Client implements Runnable  {
 				os.println(namelobby);
 			}
 		}
-		
 	}
 	
 	@Override

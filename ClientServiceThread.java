@@ -47,14 +47,39 @@ class ClientServiceThread implements Runnable {
 			if (clientChoice.equals("1")) {
 				System.out.println("it seems that joining operation is selected");
 				lobbyname = inFromClient.readLine();
+				
 				for (int i = 0; i<lobbies.size() ; i++) {
 			        if (lobbies.get(i).getLobbyName().equals(lobbyname) ) {
-			            lobbies.get(i).Join(this);
-			            lobbies.get(i).CurrentPlayers();
+			        	System.out.println("there is a lobby existing with that name! Checking if it has a password...");
+			    
+			        	if(lobbies.get(i).getLobbyPassword().equals(null)){
+			        		
+			        		serverPrintOut.println("no password");
+			        		System.out.println("it doesn't have a password! Joining to lobby...");
+				        	lobbies.get(i).Join(this);
+				            System.out.println("join complete! Time to test if the player list shows!");
+				            lobbies.get(i).CurrentPlayers();
+			        	}
+			        	else{
+			        		serverPrintOut.println("has password");
+			        		if(inFromClient.readLine().equals(lobbies.get(i).getLobbyPassword())){
+			        			System.out.println("correct password entered! Player can join to the lobby.");
+					        	lobbies.get(i).Join(this);
+					            System.out.println("join complete! Time to test if the player list shows!");
+					            lobbies.get(i).CurrentPlayers();
+			        		}
+			        		
+			        		else{
+			        			System.out.println("wrong password entered by user!");
+			        		}
+			        		
+			        	}
+			        	
+			        	
 			            break;
-			          }
-			}
-				System.out.println("Correct lobby name! Time to test if the player list shows!");
+			          }//end of outer if
+			}//end of loop
+				
 			}
 			
 			// CREATE ROOM

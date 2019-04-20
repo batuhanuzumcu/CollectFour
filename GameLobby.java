@@ -32,6 +32,9 @@ public class GameLobby extends Thread{
     public String getLobbyName(){
     	return lobbyname;
     }
+    public String getLobbyPassword(){
+    	return lobbypassword;
+    }
     
     
 }
