@@ -16,6 +16,7 @@ public class CollectFourDB {
 	private final String serverName = "localhost";
 	private final int portNumber = 3306;
 	private final String dbName = "collectfour"; // the name of the database file
+	boolean status = false; // check users' login informations
 
 	public Connection getConnection() throws SQLException {
 		Connection conn = null;
@@ -65,19 +66,16 @@ public class CollectFourDB {
 			PreparedStatement st = conn.prepareStatement("SELECT * " + "FROM users "+ "WHERE username LIKE "+ "'%"+username+"%'"+" AND password LIKE "+"'%"+password+"%'");
 			// We write a query to get the data from the table.
 			ResultSet rs = st.executeQuery();
+			status =rs.next();
+			//arr = null;
+	
+			//TO CHECK IF USER ENTERS HIS/HER INFORMATIONS CORRECTLY OR NOT
+			if (!status) {
+			        System.out.println("wrong username and/or password entered. Please try again.");
+			    return "fail";
+			}
+			
 
-			arr = null;
-			arr2 = null;
-			while (rs.next()) {
-				String x = rs.getString("username");
-				String y = rs.getString("password");
-				arr = x.replace("\n", ",");
-				arr2 = y.replace("\n", ",");
-			}
-			if(!arr.equals(username)){
-				System.out.println("wrong username and/or password entered. Please try again.");
-				return "fail";
-			}
 			return "success";
 		}
 		catch (SQLException e) {
