@@ -109,7 +109,7 @@ public class Client implements Runnable  {
 			System.out.println("please enter your username: ");
 			username=input.nextLine();
 			System.out.println("please enter your password: ");
-			String password=input.nextLine();
+			password=input.nextLine();
 			os.println(username);
 			os.println(password);
 			
@@ -117,10 +117,10 @@ public class Client implements Runnable  {
 				serverRespond = inFromServer.readLine();
 				System.out.println(serverRespond);
 			
-				if(serverRespond.equals("successfully logged in to system!")){
+				if(serverRespond.equals("successfully logged in to system!")) {
 					RoomMenuClientside();
 					//stuff to do after logging in to see menu
-					//buraya yapÄ±lÄ±cak :D
+					//buraya yapýlýcak :D
 				}
 				else
 					System.exit(0);
@@ -147,8 +147,30 @@ public class Client implements Runnable  {
 				if(serverRespond.equals("successfully registered!")){
 					RoomMenuClientside();
 					//stuff to do after registering to see menu
-					//buraya yapÄ±lacak :D
+					//buraya yapýlacak :D
 				}
+				else if(serverRespond.equals("failed to register!")) {
+
+                    System.out.println("Please create new user name: ");
+                    username = input.nextLine();
+                    System.out.println("Please create new password: ");
+                    password = input.nextLine();
+                    os.println(username);
+                    os.println(password);
+                    serverRespond = inFromServer.readLine();
+                    System.out.println(serverRespond);
+
+                    while(serverRespond.equals("fail")) {
+                        System.out.println("Please create new user name: ");
+                        username = input.nextLine();
+                        System.out.println("Please create new password: ");
+                        password = input.nextLine();
+                        os.println(username);
+                        os.println(password);
+                        serverRespond=inFromServer.readLine();
+                    }
+
+                }
 				else 
 					System.exit(0);
 				

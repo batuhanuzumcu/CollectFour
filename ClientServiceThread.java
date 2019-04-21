@@ -85,7 +85,7 @@ class ClientServiceThread implements Runnable {
 			// CREATE ROOM
 			else if (clientChoice.equals("2")) {
 				System.out.println("It seems that creating operation is selected");
-				//buraya gelip patladÄ±
+				//buraya gelip patladý
 				clientChoice = inFromClient.readLine();
 				
 				if(clientChoice.equals("1")){
@@ -155,9 +155,22 @@ class ClientServiceThread implements Runnable {
 
 				}
 				else if(result.equals("fail"))
-				{
-					serverPrintOut.println("failed to register!");	
-				}				
+                {
+                    serverPrintOut.println("failed to register!");
+
+                    Clientusername=inFromClient.readLine();
+                    Clientpassword=inFromClient.readLine();
+                    result=db.RegisterData(Clientusername,Clientpassword);
+                    serverPrintOut.println(result);
+                    while(result.equals("fail")) {
+                        Clientusername=inFromClient.readLine();
+                        Clientpassword=inFromClient.readLine();
+                        result=db.RegisterData(Clientusername,Clientpassword);
+                        serverPrintOut.println(result);
+                    }
+                   
+                }
+						
 			}
 			else
 				System.out.println("Invalid choice has been entered.");
