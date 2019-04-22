@@ -52,7 +52,8 @@ public class Client implements Runnable  {
 		
 		if(choice==1) {
 			System.out.println("it seems you chose the join operation");
-			//System.out.println("Here are the lobbies that are currently open: ");
+			System.out.println("Here are the lobbies that are currently open: ");
+			getlobbylist();
 			System.out.println("Please enter the name of the lobby you want to join:");
 			String joinname = input.nextLine();
 			os.println(joinname);
@@ -94,6 +95,24 @@ public class Client implements Runnable  {
 		}
 	}
 	
+	private void getlobbylist() {
+		String lobbyname="x";
+		
+		while(!lobbyname.equals("timetostopid598755864081")){
+			try {
+				lobbyname=inFromServer.readLine();
+				
+				if(!lobbyname.equals("timetostopid598755864081")){
+					System.out.println("Lobby name: "+lobbyname);
+				}
+				
+				} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}//end of getlobbylist method
+
 	@Override
 	public void run() {
 
@@ -109,7 +128,7 @@ public class Client implements Runnable  {
 			System.out.println("please enter your username: ");
 			username=input.nextLine();
 			System.out.println("please enter your password: ");
-			password=input.nextLine();
+			String password=input.nextLine();
 			os.println(username);
 			os.println(password);
 			
@@ -117,34 +136,13 @@ public class Client implements Runnable  {
 				serverRespond = inFromServer.readLine();
 				System.out.println(serverRespond);
 			
-				if(serverRespond.equals("successfully logged in to system!")) {
+				if(serverRespond.equals("successfully logged in to system!")){
 					RoomMenuClientside();
 					//stuff to do after logging in to see menu
-					//buraya yapýlýcak :D
+					//buraya yapÄ±lÄ±cak :D
 				}
-				else if(serverRespond.equals("TRY AGAIN")) {	
-					System.out.println("please enter your username: ");
-					username=input.nextLine();
-					System.out.println("please enter your password: ");
-					password=input.nextLine();
-					os.println(username);
-					os.println(password);
-					serverRespond=inFromServer.readLine();
-					System.out.println(serverRespond);
-					while(serverRespond.equals("TRY AGAIN")) {
-						System.out.println("please enter your username: ");
-						username=input.nextLine();
-						System.out.println("please enter your password: ");
-						password=input.nextLine();
-						os.println(username);
-						os.println(password);
-						serverRespond=inFromServer.readLine();
-						
-					}
-					serverRespond=inFromServer.readLine();
-					System.out.println(serverRespond);
-					RoomMenuClientside();
-				}
+				else
+					System.exit(0);
 				
 			}catch(IOException e){
 				e.printStackTrace();
@@ -168,39 +166,32 @@ public class Client implements Runnable  {
 				if(serverRespond.equals("successfully registered!")){
 					RoomMenuClientside();
 					//stuff to do after registering to see menu
-					//buraya yapýlacak :D
+					//buraya yapÄ±lacak :D
 				}
-				else if(serverRespond.equals("Failed to register, please try again!")) {
-
-                    System.out.println("Please create new user name, again: ");
+				else if(serverRespond.equals("failed to register!")) {
+                  
+					System.out.println("Please create new user name: ");
                     username = input.nextLine();
-                   
-                    System.out.println("Please create new password, again: ");
+                    System.out.println("Please create new password: ");
                     password = input.nextLine();
                     os.println(username);
                     os.println(password);
                     serverRespond = inFromServer.readLine();
                     System.out.println(serverRespond);
 
-                    while(serverRespond.equals("USER NAME ALREADY EXISTS")) {
-                        System.out.println("Please create new user name, again: ");
+                    while(serverRespond.equals("fail")) {
+                        System.out.println("Please create new user name: ");
                         username = input.nextLine();
-                        System.out.println("Please create new password, again: ");
+                        System.out.println("Please create new password: ");
                         password = input.nextLine();
                         os.println(username);
                         os.println(password);
                         serverRespond=inFromServer.readLine();
-                        System.out.println(serverRespond);
                     }
-                    serverRespond=inFromServer.readLine();
-					System.out.println(serverRespond);
-					RoomMenuClientside();
-					
-                    
-
-                }
-				else 
+				}
+				else
 					System.exit(0);
+
 				
 			}catch(IOException e){
 				e.printStackTrace();
