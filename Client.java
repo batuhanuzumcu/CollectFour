@@ -122,8 +122,29 @@ public class Client implements Runnable  {
 					//stuff to do after logging in to see menu
 					//buraya yapýlýcak :D
 				}
-				else
-					System.exit(0);
+				else if(serverRespond.equals("TRY AGAIN")) {	
+					System.out.println("please enter your username: ");
+					username=input.nextLine();
+					System.out.println("please enter your password: ");
+					password=input.nextLine();
+					os.println(username);
+					os.println(password);
+					serverRespond=inFromServer.readLine();
+					System.out.println(serverRespond);
+					while(serverRespond.equals("TRY AGAIN")) {
+						System.out.println("please enter your username: ");
+						username=input.nextLine();
+						System.out.println("please enter your password: ");
+						password=input.nextLine();
+						os.println(username);
+						os.println(password);
+						serverRespond=inFromServer.readLine();
+						
+					}
+					serverRespond=inFromServer.readLine();
+					System.out.println(serverRespond);
+					RoomMenuClientside();
+				}
 				
 			}catch(IOException e){
 				e.printStackTrace();
@@ -149,26 +170,33 @@ public class Client implements Runnable  {
 					//stuff to do after registering to see menu
 					//buraya yapýlacak :D
 				}
-				else if(serverRespond.equals("failed to register!")) {
+				else if(serverRespond.equals("Failed to register, please try again!")) {
 
-                    System.out.println("Please create new user name: ");
+                    System.out.println("Please create new user name, again: ");
                     username = input.nextLine();
-                    System.out.println("Please create new password: ");
+                   
+                    System.out.println("Please create new password, again: ");
                     password = input.nextLine();
                     os.println(username);
                     os.println(password);
                     serverRespond = inFromServer.readLine();
                     System.out.println(serverRespond);
 
-                    while(serverRespond.equals("fail")) {
-                        System.out.println("Please create new user name: ");
+                    while(serverRespond.equals("USER NAME ALREADY EXISTS")) {
+                        System.out.println("Please create new user name, again: ");
                         username = input.nextLine();
-                        System.out.println("Please create new password: ");
+                        System.out.println("Please create new password, again: ");
                         password = input.nextLine();
                         os.println(username);
                         os.println(password);
                         serverRespond=inFromServer.readLine();
+                        System.out.println(serverRespond);
                     }
+                    serverRespond=inFromServer.readLine();
+					System.out.println(serverRespond);
+					RoomMenuClientside();
+					
+                    
 
                 }
 				else 
