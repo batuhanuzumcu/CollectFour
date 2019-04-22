@@ -38,11 +38,14 @@ public class CollectFourDB {
 				// DUPLICATE USERNAME CONTROL
 				String usernameControl = "SELECT * FROM users where username='" + clientName + "'";
 				ResultSet rs = s.executeQuery(usernameControl);
-				if (rs.next() == true) {
-					System.out.println("USER NAME ALREADY EXISTS.");
-					return "fail";
-					// IF THE USER NAME IS UNIQUE
-				} else {
+			
+			if (rs.next() == true) {
+				System.out.println("It seems that user name is in use");
+				return "USER NAME ALREADY EXISTS";
+			} 
+			
+				// IF THE USER NAME IS UNIQUE
+				 else {
 					arr = "INSERT INTO users " + "(username,password) " + "VALUES ('" + clientName + "','" + clientPassword+ "')";
 					s.execute(arr);
 					return "success";
