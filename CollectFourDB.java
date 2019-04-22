@@ -53,7 +53,7 @@ public class CollectFourDB {
 			return null;
 		}
 	
-	public String Login(String username,String password) {
+	public String Login(String clientName,String clientPass) {
 		// Connect to MySQL
 		Connection conn = null;
 		try {
@@ -63,19 +63,21 @@ public class CollectFourDB {
 			e.printStackTrace();
 		}
 		try {
-			PreparedStatement st = conn.prepareStatement("SELECT * " + "FROM users "+ "WHERE username LIKE "+ "'%"+username+"%'"+" AND password LIKE "+"'%"+password+"%'");
+			//get login information
+			String sql ="SELECT * FROM users WHERE username=? and password=?";
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setString(1, clientName);
+			st.setString(2, clientPass);
 			// We write a query to get the data from the table.
 			ResultSet rs = st.executeQuery();
 			status =rs.next();
-			//arr = null;
 	
 			//TO CHECK IF USER ENTERS HIS/HER INFORMATIONS CORRECTLY OR NOT
 			if (!status) {
-			        System.out.println("wrong username and/or password entered. Please try again.");
-			    return "fail";
+					System.out.println("wrong username and/or password entered. Please try again.");
+				return "TRY AGAIN";
 			}
-			
-
+		
 			return "success";
 		}
 		catch (SQLException e) {
