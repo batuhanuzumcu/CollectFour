@@ -16,7 +16,8 @@ public class Client implements Runnable  {
 	static Scanner input = new Scanner(System.in); // to get connection IP from user
 	String username, password;
 	String serverRespond = null;
-	static String serverConfirm=null; 
+	//static String serverConfirm=null; 
+	
 	public static void main(String[] args) {
 
 		int portNumber = 3333;
@@ -128,7 +129,7 @@ public class Client implements Runnable  {
 			System.out.println("please enter your username: ");
 			username=input.nextLine();
 			System.out.println("please enter your password: ");
-			String password=input.nextLine();
+			password=input.nextLine();
 			os.println(username);
 			os.println(password);
 			
@@ -138,8 +139,6 @@ public class Client implements Runnable  {
 			
 				if(serverRespond.equals("successfully logged in to system!")){
 					RoomMenuClientside();
-					//stuff to do after logging in to see menu
-					//buraya yapılıcak :D
 				}
 				else
 					System.exit(0);
@@ -165,8 +164,6 @@ public class Client implements Runnable  {
 				
 				if(serverRespond.equals("successfully registered!")){
 					RoomMenuClientside();
-					//stuff to do after registering to see menu
-					//buraya yapılacak :D
 				}
 				else if(serverRespond.equals("failed to register!")) {
                   
@@ -188,6 +185,9 @@ public class Client implements Runnable  {
                         os.println(password);
                         serverRespond=inFromServer.readLine();
                     }
+                    System.out.println("finally registered successfully!");
+					RoomMenuClientside();
+
 				}
 				else
 					System.exit(0);
@@ -199,14 +199,11 @@ public class Client implements Runnable  {
 		}
 		else
 		{
-			try{
-				serverRespond = inFromServer.readLine();
-				System.out.println(serverRespond);
-				System.exit(0);
-				
-			}catch(IOException e){
-				e.printStackTrace();
-			}
+
+			System.out.println("Incorrect input! exiting...");
+//				serverRespond = inFromServer.readLine();
+//				System.out.println(serverRespond);
+			System.exit(0);
 		}
 		
 	}//end of run

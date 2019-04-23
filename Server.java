@@ -28,8 +28,10 @@ public class Server{
 						System.out.println("A new client is connected : " + s);
 						 for (int i = 0; ; i++) {
 				        if (threads.get(i) == null) {
-				            threads.add(i, new ClientServiceThread(s,db,threads,lobbies));
-				            threads.get(i).run();
+							ClientServiceThread clientThread = new ClientServiceThread(s,db,threads,lobbies);
+				            threads.add(i, clientThread);
+							clientThread.start();
+
 				            break;
 				          }
 				        }

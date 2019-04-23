@@ -7,7 +7,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 
-class ClientServiceThread implements Runnable {
+class ClientServiceThread extends Thread implements Runnable {
 
 	String username;
 	Socket socket;
@@ -85,8 +85,6 @@ class ClientServiceThread implements Runnable {
 			        		}
 			        		
 			        	}
-			        	
-			        	
 			            break;
 			          }//end of outer if
 			}//end of loop
@@ -95,8 +93,7 @@ class ClientServiceThread implements Runnable {
 			
 			// CREATE ROOM
 			else if (clientChoice.equals("2")) {
-				System.out.println("It seems that creating operation is selected");
-				
+				System.out.println("It seems that creating operation is selected");	
 				clientChoice = inFromClient.readLine();
 				
 				if(clientChoice.equals("1")){
@@ -183,6 +180,7 @@ class ClientServiceThread implements Runnable {
 			}
 			else
 				System.out.println("Invalid choice has been entered.");
+			System.exit(0);
 			
 		}//end of try
 		catch (IOException e) {

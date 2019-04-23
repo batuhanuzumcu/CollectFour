@@ -20,6 +20,7 @@ public class GameLobby extends Thread{
     	players.add(a);  	
     }
     
+    
     public void CurrentPlayers(){
 		System.out.println("the current players inside are: ");
 

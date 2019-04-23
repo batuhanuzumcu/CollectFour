@@ -18,6 +18,7 @@ public class CollectFourDB {
 	private final String dbName = "collectfour"; // the name of the database file
 	boolean status = false; // check users' login informations
 
+
 	public Connection getConnection() throws SQLException {
 		Connection conn = null;
 		Properties connectionProps = new Properties();
@@ -38,14 +39,11 @@ public class CollectFourDB {
 				// DUPLICATE USERNAME CONTROL
 				String usernameControl = "SELECT * FROM users where username='" + clientName + "'";
 				ResultSet rs = s.executeQuery(usernameControl);
-			
-			if (rs.next() == true) {
-				System.out.println("It seems that user name is in use");
-				return "USER NAME ALREADY EXISTS";
-			} 
-			
-				// IF THE USER NAME IS UNIQUE
-				 else {
+				if (rs.next() == true) {
+					System.out.println("USER NAME ALREADY EXISTS.");
+					return "fail";
+					// IF THE USER NAME IS UNIQUE
+				} else {
 					arr = "INSERT INTO users " + "(username,password) " + "VALUES ('" + clientName + "','" + clientPassword+ "')";
 					s.execute(arr);
 					return "success";
@@ -56,7 +54,7 @@ public class CollectFourDB {
 			return null;
 		}
 	
-	public String Login(String clientName,String clientPass) {
+	public String Login(String username,String password) {
 		// Connect to MySQL
 		Connection conn = null;
 		try {
@@ -66,21 +64,20 @@ public class CollectFourDB {
 			e.printStackTrace();
 		}
 		try {
-			//get login information
-			String sql ="SELECT * FROM users WHERE username=? and password=?";
-			PreparedStatement st = conn.prepareStatement(sql);
-			st.setString(1, clientName);
-			st.setString(2, clientPass);
+			PreparedStatement st = conn.prepareStatement("SELECT * " + "FROM users "+ "WHERE username LIKE "+ "'%"+username+"%'"+" AND password LIKE "+"'%"+password+"%'");
 			// We write a query to get the data from the table.
 			ResultSet rs = st.executeQuery();
 			status =rs.next();
-	
+
+		//	arr = null;
+		//	arr2 = null;
+
 			//TO CHECK IF USER ENTERS HIS/HER INFORMATIONS CORRECTLY OR NOT
 			if (!status) {
-					System.out.println("wrong username and/or password entered. Please try again.");
-				return "TRY AGAIN";
+			        System.out.println("wrong username and/or password entered. Please try again.");
+			    return "fail";
 			}
-		
+
 			return "success";
 		}
 		catch (SQLException e) {
