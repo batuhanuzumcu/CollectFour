@@ -63,6 +63,26 @@ public class Client implements Runnable  {
 				String lobbyhaspassword = inFromServer.readLine();
 				if(lobbyhaspassword.equals("no password")){
 		    		System.out.println("it seems that this lobby has no password! Joining to lobby now.");
+		    		
+		    		//joinlendikten sonra yapılacaklar
+		    
+		    		System.out.println("Time to wait for the game to start!");
+		    		serverRespond="x";
+		    		
+		    		while(!serverRespond.equals("start")){
+		    			serverRespond = inFromServer.readLine();
+		    			System.out.println(serverRespond);
+		    		}
+		    		System.out.println("finally start arrived!");
+		    		System.out.println("game is starting now!");
+		    		//after this we try to get input from game itself
+		    		try {
+						System.out.println(inFromServer.readLine());
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+		    		
 
 				}
 				else if(lobbyhaspassword.equals("has password")){
@@ -70,6 +90,27 @@ public class Client implements Runnable  {
 		    		System.out.println( "Please enter the password to continue: ");
 		    		String joinpass = input.nextLine();
 		    		os.println(joinpass);
+		    		
+		    		//joinlendikten sonra yapılacaklar
+
+		    		System.out.println("Time to wait for the game to start!");
+		    		serverRespond="x";
+		    		
+		    		while(!serverRespond.equals("start")){
+		    			serverRespond = inFromServer.readLine();
+		    			System.out.println(serverRespond);
+		    		}
+		    		System.out.println("finally start arrived!");
+		    		System.out.println("game is starting now!");
+		    		//after this we try to get input from game itself
+		    		try {
+						System.out.println(inFromServer.readLine());
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	
+
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -93,6 +134,38 @@ public class Client implements Runnable  {
 			else{
 				os.println(namelobby);
 			}
+			System.out.println("Lobby created! Time to wait for other players to start the lobby.");
+    		serverRespond="x";
+    		
+    		while(!serverRespond.equals("start")){
+    			try {
+					serverRespond = inFromServer.readLine();
+	    			System.out.println(serverRespond);
+					if(serverRespond.equals("Waiting for admin to start the game:")){
+						String adminresponse = "x";
+						while(!adminresponse.equals("start")){
+							adminresponse = input.nextLine();
+							os.println(adminresponse);
+						}
+						
+					}
+					
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+    		}
+    		System.out.println("start operation is selected!");
+    		System.out.println("game is starting now!");
+    		//after this we try to get input from game itself
+    		try {
+				System.out.println(inFromServer.readLine());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			
 		}
 	}
 	
