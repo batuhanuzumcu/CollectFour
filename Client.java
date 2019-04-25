@@ -136,9 +136,10 @@ public class Client implements Runnable  {
 			}
 			System.out.println("Lobby created! Time to wait for other players to start the lobby.");
     		serverRespond="x";
-    		
-    		while(!serverRespond.equals("start")){
+    				
     			try {
+    	    		while(!serverRespond.equals("start")){//start of while loop a
+
 					serverRespond = inFromServer.readLine();
 	    			System.out.println(serverRespond);
 					if(serverRespond.equals("Waiting for admin to start the game:")){
@@ -149,12 +150,12 @@ public class Client implements Runnable  {
 						}
 						
 					}
-					
+    	    		}//end of while loop a
+
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-    		}
     		System.out.println("start operation is selected!");
     		System.out.println("game is starting now!");
     		//after this we try to get input from game itself

@@ -111,12 +111,7 @@ class ClientServiceThread extends Thread implements Runnable {
 			        	    	    }//end of else if
 			        			  
 			        			  currentplayersize=lobbies.get(i).players.size();
-			        			  try {
-			    					this.sleep(300);
-			    				} catch (InterruptedException e) {
-			    					// TODO Auto-generated catch block
-			    					e.printStackTrace();
-			    				}
+			        			  
 			        			  
 			        		}//end of main if
 			        		
@@ -167,7 +162,8 @@ class ClientServiceThread extends Thread implements Runnable {
 				    	    	    			serverPrintOut.println("Waiting for admin to start the game:");
 				        	    	    	
 				        	    	    		while(!lobbies.get(i).getAdminChoice().equals("start")){
-				        	    	    			lobbies.get(i).setAdminChoice(inFromClient.readLine());
+				        	    	    			String newchoice = inFromClient.readLine();
+				        	    	    			lobbies.get(i).setAdminChoice(newchoice);
 				        	    	    		
 				        	    	    			if(lobbies.get(i).getAdminChoice().equals("start")){
 				        	    	    				serverPrintOut.println("start");					        	    	    		    			        	    	    				
@@ -185,12 +181,7 @@ class ClientServiceThread extends Thread implements Runnable {
 				        	    	    		
 				        	    	    }				        			  
 				        			  currentplayersize=lobbies.get(i).players.size();
-				        			  try {
-				    					this.sleep(300);
-				    				} catch (InterruptedException e) {
-				    					// TODO Auto-generated catch block
-				    					e.printStackTrace();
-				    				}			        			  
+				        			  	        			  
 				        		}//end of main if       						       
 				        	}//end of while loop
 				            break;
@@ -211,11 +202,11 @@ class ClientServiceThread extends Thread implements Runnable {
 				            //dangerous waters.jpg
 				            //lobbies.get(i).start();
 				           
-				            currentplayersize = lobbies.get(i).players.size();
+				          //  currentplayersize = lobbies.get(i).players.size();
 				    		
 				            while(true){
 				        		
-				        		if(currentplayersize!=lobbies.get(i).players.size()){
+//				        		if(currentplayersize!=lobbies.get(i).players.size()){
 				        			
 				        			  if(lobbies.get(i).players.size()==10){			        								        	    	    		
 				        	    	    		serverPrintOut.println("max number of players joined!");
@@ -230,7 +221,7 @@ class ClientServiceThread extends Thread implements Runnable {
 				        	    	    	try {			    	    	    			
 				    	    	    			serverPrintOut.println("it seems enough players have joined to this lobby!");
 				    	    	    			serverPrintOut.println("Waiting for admin to start the game:");
-				        	    	    	
+				        	    	    	//potansiyel sıkıntı=?
 				    	    	    			while(!lobbies.get(i).getAdminChoice().equals("start")){
 				        	    	    			lobbies.get(i).setAdminChoice(inFromClient.readLine());
 				        	    	    		
@@ -250,15 +241,10 @@ class ClientServiceThread extends Thread implements Runnable {
 				        	    	    		
 				        	    	    }
 				        			  
-				        			  currentplayersize=lobbies.get(i).players.size();
-				        			  try {
-				    					this.sleep(300);
-				    				} catch (InterruptedException e) {
-				    					// TODO Auto-generated catch block
-				    					e.printStackTrace();
-				    				}
+				        			 // currentplayersize=lobbies.get(i).players.size();
+				        			 
 				        			  
-				        		}//end of main if
+//				        		}//end of main if
 				        	}//end of while loop			            
 				            break;
 				          }

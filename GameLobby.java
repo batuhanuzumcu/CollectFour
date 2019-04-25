@@ -9,20 +9,26 @@ public class GameLobby extends Thread{
 	ArrayList<ClientServiceThread> players = new ArrayList<ClientServiceThread>();
 	ClientServiceThread admin;
 	String adminchoice;
+	int playercounter;
     
     public GameLobby(String name,String password){
         lobbyname=name;
         lobbypassword=password;
         adminchoice="x";
+        playercounter=0;
     }
 
     public GameLobby(String name){
     	lobbyname=name;
     	adminchoice="x";
+    	playercounter=0;
     }
     
     public void Join(ClientServiceThread a){
-    	players.add(a);  	
+        		
+    	players.add(playercounter, a);
+        		playercounter++;
+    		
     }
     public String getAdminChoice(){
     	return adminchoice;
