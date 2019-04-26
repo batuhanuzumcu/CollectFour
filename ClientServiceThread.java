@@ -18,7 +18,9 @@ class ClientServiceThread extends Thread implements Runnable {
 	CollectFourDB db;
 	ArrayList<ClientServiceThread> threads;
 	ArrayList<GameLobby> lobbies;
-    int currentplayersize;
+	String isthiswhy;
+	
+    int lobbysize;
     
 	ClientServiceThread(Socket s, CollectFourDB database, ArrayList<ClientServiceThread> threads,ArrayList<GameLobby> lobbies) {
 		socket = s;
@@ -45,6 +47,8 @@ class ClientServiceThread extends Thread implements Runnable {
 		}
 		serverPrintOut.println("timetostopid598755864081");
 	}//end of lobbylist method
+	
+	
 	
 	public void RoomMenuServerside() {
 
@@ -74,6 +78,7 @@ class ClientServiceThread extends Thread implements Runnable {
 			        	}
 			        	else{
 			        		serverPrintOut.println("has password");
+			        		
 			        		if(inFromClient.readLine().equals(lobbies.get(i).getLobbyPassword())){
 			        			System.out.println("correct password entered! Player can join to the lobby.");
 					        	lobbies.get(i).Join(this);
@@ -86,35 +91,13 @@ class ClientServiceThread extends Thread implements Runnable {
 			        		
 			        	}
 			        	//time to do after joining lobby part:
-				        
-			            currentplayersize = lobbies.get(i).players.size();
-			        	while(true){
-			        		
-			        		if(currentplayersize!=lobbies.get(i).players.size()){
-			        			  if(lobbies.get(i).players.size()==10){
-			        	    	    	
-			            	    	    	serverPrintOut.println("max number of players joined!");
-			            	    	    	serverPrintOut.println("starting the game now.");
-			        	    	    		serverPrintOut.println("start");	    	
-			        	    	    	
-			        	    	        break;
-			        	    	    }
-			        	    	    else if(3<lobbies.get(i).players.size() && lobbies.get(i).players.size()<10){
-			        	    	    	serverPrintOut.println("it seems enough players have joined to this lobby!");
-										serverPrintOut.println("Waiting for admin to start the game:");		        	    	    					        	    	    				
-										
-			    	    	    		if(lobbies.get(i).getAdminChoice().equals("start")){
-			    	    	    			serverPrintOut.println("start");
-											break;
-			    	    	    		}
-			        	    	    		
-			        	    	    }//end of else if
-			        			  
-			        			  currentplayersize=lobbies.get(i).players.size();
-			        			  
-			        			  
-			        		}//end of main if
-			        		
+           
+			        	while(true){	
+			        		if(lobbies.get(i).players.size()==lobbies.get(i).getlobbylimit()){
+			        			//devam
+			        			
+			        			break;
+			        		}
 			        	}//end of while loop
 			        	
 			            break;
@@ -130,128 +113,51 @@ class ClientServiceThread extends Thread implements Runnable {
 				
 				if(clientChoice.equals("1")){
 					lobbyname = inFromClient.readLine();
+					lobbysize= Integer.parseInt(inFromClient.readLine());
 					lobbypass = inFromClient.readLine();
 					for (int i = 0; ; i++) {
 				        if (lobbies.get(i) == null) {
-				            lobbies.add(i, new GameLobby(lobbyname,lobbypass));
+				            lobbies.add(i, new GameLobby(lobbyname,lobbypass,lobbysize));
 				            lobbies.get(i).Join(this);
-				            //dangerous waters.jpg
-				            //lobbies.get(i).start();
-				    		
-				            //after this point using preparation inside here
-				          
-				            currentplayersize = lobbies.get(i).players.size();
-				    		
-				            while(true){
-				        		
-				        		if(currentplayersize!=lobbies.get(i).players.size()){
-				        			
-				        			  if(lobbies.get(i).players.size()==10){
-				        								        	    	    		
-				        	    	    		serverPrintOut.println("max number of players joined!");
-				        	    	    		serverPrintOut.println("starting the game now.");
-				        	    	    		serverPrintOut.println("start");				      	
-				        	    	    	Game currentgame = new Game(lobbies.get(i).players);
-				        	    	        currentgame.start();
-				        	    	        break;
-				        	    	    }
-				        			  
-				        	    	    else if(3<lobbies.get(i).players.size() && lobbies.get(i).players.size()<10){
-				        	    	    	try {			    	    	    			
-				    	    	    			serverPrintOut.println("it seems enough players have joined to this lobby!");
-				    	    	    			serverPrintOut.println("Waiting for admin to start the game:");
-				        	    	    	
-				        	    	    		while(!lobbies.get(i).getAdminChoice().equals("start")){
-				        	    	    			String newchoice = inFromClient.readLine();
-				        	    	    			lobbies.get(i).setAdminChoice(newchoice);
-				        	    	    		
-				        	    	    			if(lobbies.get(i).getAdminChoice().equals("start")){
-				        	    	    				serverPrintOut.println("start");					        	    	    		    			        	    	    				
-				        	    	    				Game currentgame = new Game(lobbies.get(i).players);
-				        	    	    			    currentgame.start();
-				        	    	    			    break;
-
-				        	    	    			}//end of if
-				        	    	    		}
-				        	    				
-				        	    			} catch (IOException e) {
-				        	    				// TODO Auto-generated catch block
-				        	    				e.printStackTrace();
-				        	    			}
-				        	    	    		
-				        	    	    }				        			  
-				        			  currentplayersize=lobbies.get(i).players.size();
-				        			  	        			  
-				        		}//end of main if       						       
-				        	}//end of while loop
 				            break;
 				          }
 					}
-					//System.out.println("Successfully created a lobby with password!");
 					//owner of lobby yapılacaklar
 					//will be done from gamelobby
 					
-				}	
-				
+				}					
 				else {
 					lobbyname = inFromClient.readLine();
+					lobbysize= Integer.parseInt(inFromClient.readLine());
 					for (int i = 0; ; i++) {
 				        if (lobbies.get(i) == null) {
-				            lobbies.add(i, new GameLobby(lobbyname));
+				            lobbies.add(i, new GameLobby(lobbyname,lobbysize));
 				            lobbies.get(i).Join(this);
-				            //dangerous waters.jpg
-				            //lobbies.get(i).start();
-				           
-				          //  currentplayersize = lobbies.get(i).players.size();
-				    		
-				            while(true){
-				        		
-//				        		if(currentplayersize!=lobbies.get(i).players.size()){
-				        			
-				        			  if(lobbies.get(i).players.size()==10){			        								        	    	    		
-				        	    	    		serverPrintOut.println("max number of players joined!");
-				        	    	    		serverPrintOut.println("starting the game now.");
-				        	    	    		serverPrintOut.println("start");				      	
-				        	    	    	Game currentgame = new Game(lobbies.get(i).players);
-				        	    	        currentgame.start();
-				        	    	        break;
-				        	    	    }
-				        			  
-				        	    	    else if(3<lobbies.get(i).players.size() && lobbies.get(i).players.size()<10){
-				        	    	    	try {			    	    	    			
-				    	    	    			serverPrintOut.println("it seems enough players have joined to this lobby!");
-				    	    	    			serverPrintOut.println("Waiting for admin to start the game:");
-				        	    	    	//potansiyel sıkıntı=?
-				    	    	    			while(!lobbies.get(i).getAdminChoice().equals("start")){
-				        	    	    			lobbies.get(i).setAdminChoice(inFromClient.readLine());
-				        	    	    		
-				        	    	    			if(lobbies.get(i).getAdminChoice().equals("start")){
-				        	    	    				serverPrintOut.println("start");					        	    	    		    			        	    	    				
-				        	    	    				Game currentgame = new Game(lobbies.get(i).players);
-				        	    	    			    currentgame.start();
-				        	    	    			    break;
+				            				    		
+				            while(true){	
+				            	if(lobbies.get(i).players.size()==lobbies.get(i).getlobbylimit()){
+				            		for(int emergency=0 ; emergency<lobbies.get(i).players.size() ;emergency++){
+				        				if(lobbies.get(i).players.get(emergency)==this){
 
-				        	    	    			}//end of if
-				        	    	    		}
-        	    				
-				        	    			} catch (IOException e) {
-				        	    				// TODO Auto-generated catch block
-				        	    				e.printStackTrace();
-				        	    			}
-				        	    	    		
-				        	    	    }
-				        			  
-				        			 // currentplayersize=lobbies.get(i).players.size();
-				        			 
-				        			  
-//				        		}//end of main if
-				        	}//end of while loop			            
-				            break;
-				          }
-				}
-					System.out.println("Successfully created a lobby without password!");
-					//owner of lobby yapılacaklar
-					//will be done from gamelobby				
+				        					serverPrintOut.println("start");
+			        	    	    		String distributionconfirm = inFromClient.readLine();
+			        	    	    		if(distributionconfirm.equals("distribute")){
+			        	    	    			serverPrintOut.println("here are your numbers boye");
+			        	    	    			
+			        	    	    		}    	
+			        	    	    		
+			        	    	    		break;
+				        				}
+				        				
+				        			}
+	        	    	        break;   
+			        			  }//end of inner if      
+			        			  
+				            }//end of while loop		  
+				        	
+				            break;			      				            
+				        }				
+					}
 				}
 			} 
 			else
@@ -264,6 +170,8 @@ class ClientServiceThread extends Thread implements Runnable {
 		} // end of catch
 
 	}//end of roommenuserverside method
+	
+	
 	
 	public void run() {
 		System.out.println("it seems a client has connected! let's wait for him/her to login or register!");
