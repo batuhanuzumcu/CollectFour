@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 class ClientServiceThread extends Thread implements Runnable {
 
@@ -18,9 +20,10 @@ class ClientServiceThread extends Thread implements Runnable {
 	CollectFourDB db;
 	ArrayList<ClientServiceThread> threads;
 	ArrayList<GameLobby> lobbies;
-	String isthiswhy;
-	
-    int lobbysize;
+	List<Integer> playerdeck;
+	int lobbysize;
+	int clientparseInt;
+	int ParseResult;
     
 	ClientServiceThread(Socket s, CollectFourDB database, ArrayList<ClientServiceThread> threads,ArrayList<GameLobby> lobbies) {
 		socket = s;
@@ -35,9 +38,48 @@ class ClientServiceThread extends Thread implements Runnable {
 			e.printStackTrace();
 		}		
 	}	
-	public void playername(){
-		System.out.println("The name of this player is: "+username);
+	public String getplayername(){
+		return ("Player: "+username);
 	}
+	
+	public void setplayerdeck(List<Integer> newdeck){
+		playerdeck = newdeck;
+	}
+	public List<Integer> getplayerdeck(){
+		return playerdeck;
+	}
+//	public void setIntToParse(int newClientInput){
+//		clientparseInt = newClientInput;
+//	}
+//	public int getIntToParse(){
+//		return clientparseInt;
+//	}
+//	public int getParseResult(){
+//		return ParseResult;
+//	}
+//	
+//	public void setParseResult(int newResult){
+//		ParseResult = newResult;
+//	}
+//	
+//	
+//	
+//	public int removenumber(int toberemoved){
+//		Iterator<Integer> iter = playerdeck.iterator();
+//		while(iter.hasNext()){
+//			int nextnumber = iter.next();
+//			if(nextnumber==toberemoved){
+//				iter.remove();
+//			    return nextnumber;
+//			}
+//
+//		}
+//		return 0;
+//	}
+//	
+//	public void addnumber(int tobeadded){
+//		playerdeck.add(tobeadded);
+//	}
 
 	public void lobbylist(){
 		for(int z=0 ; z<lobbies.size() ; z++){
@@ -47,7 +89,6 @@ class ClientServiceThread extends Thread implements Runnable {
 		}
 		serverPrintOut.println("timetostopid598755864081");
 	}//end of lobbylist method
-	
 	
 	
 	public void RoomMenuServerside() {
