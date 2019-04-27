@@ -22,8 +22,7 @@ class ClientServiceThread extends Thread implements Runnable {
 	ArrayList<GameLobby> lobbies;
 	List<Integer> playerdeck;
 	int lobbysize;
-	int clientparseInt;
-	int ParseResult;
+	int tobechanged;
     
 	ClientServiceThread(Socket s, CollectFourDB database, ArrayList<ClientServiceThread> threads,ArrayList<GameLobby> lobbies) {
 		socket = s;
@@ -48,38 +47,25 @@ class ClientServiceThread extends Thread implements Runnable {
 	public List<Integer> getplayerdeck(){
 		return playerdeck;
 	}
-//	public void setIntToParse(int newClientInput){
-//		clientparseInt = newClientInput;
-//	}
-//	public int getIntToParse(){
-//		return clientparseInt;
-//	}
-//	public int getParseResult(){
-//		return ParseResult;
-//	}
-//	
-//	public void setParseResult(int newResult){
-//		ParseResult = newResult;
-//	}
-//	
-//	
-//	
-//	public int removenumber(int toberemoved){
-//		Iterator<Integer> iter = playerdeck.iterator();
-//		while(iter.hasNext()){
-//			int nextnumber = iter.next();
-//			if(nextnumber==toberemoved){
-//				iter.remove();
-//			    return nextnumber;
-//			}
-//
-//		}
-//		return 0;
-//	}
-//	
-//	public void addnumber(int tobeadded){
-//		playerdeck.add(tobeadded);
-//	}
+
+	public int findnumber(int x){
+		for(int g=0; g<playerdeck.size(); g++){
+			int nextnumber = playerdeck.get(g);
+			if(nextnumber==x){
+				tobechanged=g;
+			    return nextnumber;
+			}
+		}
+		return 0;
+	}
+	public void changedeckvalue(int index,int newnumber){
+		playerdeck.set(index, newnumber);
+	}
+	
+	public int getnumbertochange(){
+		return tobechanged;
+	}
+
 
 	public void lobbylist(){
 		for(int z=0 ; z<lobbies.size() ; z++){

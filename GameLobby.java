@@ -3,6 +3,7 @@ package Game;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 public class GameLobby extends Thread{
@@ -99,13 +100,11 @@ public class GameLobby extends Thread{
 					}		  		
     				while(true){//start of while loop	
         				clientparseInt = Integer.parseInt(clientinput);
-        				players.get(a).setIntToParse(clientparseInt);
-        				players.get(a).setParseResult(players.get(a).removenumber(players.get(a).getIntToParse()));    				
-    					 if(players.get(a).getParseResult()!=0){
+    					 if(players.get(a).findnumber(clientparseInt)!=0){
         					discarded.add(clientparseInt);
         					TurnEnded++;
         					break;       				
-    					} else if(players.get(a).getParseResult()==0){
+    					} else if(players.get(a).findnumber(clientparseInt)==0){
         					players.get(a).serverPrintOut.println("Incorrect input! Send again please:");
         					players.get(a).serverPrintOut.println("Send input");
         					try {
@@ -125,9 +124,15 @@ public class GameLobby extends Thread{
     				if(TurnEnded==4){
     	    			sendMessageToAllPlayers("Here is the list of discarded ones for test");
     	    			sendMessageToAllPlayers(discarded.toString());
-    					
+    	    			Collections.shuffle(discarded);
+    	    			sendMessageToAllPlayers("now to get your new numbers: ");	    			
     					break;
     				}
+    			}
+    			//got out of the control part
+    			for(int h=0 ; h<players.size() ; h++){
+        			players.get(h).changedeckvalue(players.get(h).getnumbertochange(),discarded.get(h));
+        			players.get(h).serverPrintOut.println(players.get(h).getplayerdeck());
     			}
     			
     			//finish the game
@@ -169,5 +174,13 @@ public class GameLobby extends Thread{
 		}
     }
     
+//    private void oneiteration(){
+//    	if(discarded.size()!=0){
+//			for(int t=0 ; t<discarded.size() ; t++){
+//				discarded.remove(0);			
+//			}	
+//		}
+//    	
+//    }
     
 }
