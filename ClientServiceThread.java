@@ -23,12 +23,14 @@ class ClientServiceThread extends Thread implements Runnable {
 	List<Integer> playerdeck;
 	int lobbysize;
 	int tobechanged;
+	int playerscore;
     
 	ClientServiceThread(Socket s, CollectFourDB database, ArrayList<ClientServiceThread> threads,ArrayList<GameLobby> lobbies) {
 		socket = s;
 		db = database;
 		this.threads = threads;
 		this.lobbies = lobbies;
+		playerscore=0;
 		try {
 			inFromClient = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			serverPrintOut = new PrintWriter(socket.getOutputStream(), true);
@@ -66,6 +68,12 @@ class ClientServiceThread extends Thread implements Runnable {
 		return tobechanged;
 	}
 
+	public void addtoscore(int newscore){
+		playerscore+=newscore;
+	}
+	public int getscore(){
+		return playerscore;
+	}
 
 	public void lobbylist(){
 		for(int z=0 ; z<lobbies.size() ; z++){
