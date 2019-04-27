@@ -8,16 +8,11 @@ import java.util.ArrayList;
 public class Server{
 	private static CollectFourDB db;
 	private static boolean closed = false;
-	static ArrayList<ClientServiceThread> threads = new ArrayList<ClientServiceThread>(100);
-	static ArrayList<GameLobby> lobbies = new ArrayList<GameLobby>(100);
+	static ArrayList<ClientServiceThread> threads = new ArrayList<ClientServiceThread>();
+	static ArrayList<GameLobby> lobbies = new ArrayList<GameLobby>();
 
 
 	public static void main(String args[]) throws Exception {
-		for (int initialize = 0; initialize < 100; initialize++) {
-			  threads.add(null);
-			  lobbies.add(null);
-			}
-		
 		db = new CollectFourDB(); // Database initialization
 		ServerSocket ss = new ServerSocket(3333);		
 			Socket s = null;
@@ -26,18 +21,11 @@ public class Server{
 				 while(!closed) {
 						s = ss.accept();
 						System.out.println("A new client is connected : " + s);
-						 for (int i = 0; ; i++) {
-				        if (threads.get(i) == null) {
-							ClientServiceThread clientThread = new ClientServiceThread(s,db,threads,lobbies);
-				            threads.add(i, clientThread);
-							clientThread.start();
-
-				            break;
-				          }
-				        }
+						ClientServiceThread clientThread = new ClientServiceThread(s,db,threads,lobbies);
+						threads.add(clientThread);
+						clientThread.start();
+ 
 				 }
-					 //Thread clientThread = new Thread (new ClientServiceThread(s,db,threads));
-					//clientThread.start();
 				
 			} catch (IOException e) {
 				throw new RuntimeException("Error accepting client connection", e);

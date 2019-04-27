@@ -65,43 +65,27 @@ class ClientServiceThread extends Thread implements Runnable {
 				lobbyname = inFromClient.readLine();
 				
 				for (int i = 0; i<lobbies.size() ; i++) {
-					
 			        if (lobbies.get(i).getLobbyName().equals(lobbyname) ) {
 			        	System.out.println("there is a lobby existing with that name! Checking if it has a password...");
 			    
-			        	if(lobbies.get(i).getLobbyPassword().equals(null)){
-			        		
+			        	if(lobbies.get(i).getLobbyPassword().isEmpty()){
 			        		serverPrintOut.println("no password");
 			        		System.out.println("it doesn't have a password! Joining to lobby...");
-				        	lobbies.get(i).Join(this);				        	
-				        	
+				        	lobbies.get(i).Join(this);
 			        	}
 			        	else{
 			        		serverPrintOut.println("has password");
-			        		
 			        		if(inFromClient.readLine().equals(lobbies.get(i).getLobbyPassword())){
 			        			System.out.println("correct password entered! Player can join to the lobby.");
 					        	lobbies.get(i).Join(this);
-					        
 			        		}
-			        		
 			        		else{
 			        			System.out.println("wrong password entered by user!");
 			        		}
-			        		
 			        	}
-			        	//time to do after joining lobby part:
-           
-			        	while(true){	
-			        		if(lobbies.get(i).players.size()==lobbies.get(i).getlobbylimit()){
-			        			//devam
-			        			
-			        			break;
-			        		}
-			        	}//end of while loop
-			        	
-			            break;
-			          }//end of outer if
+
+			        	blockUntilAllPlayersIn(lobbies.get(i));
+			          }
 			}//end of loop
 				
 			}
@@ -115,49 +99,21 @@ class ClientServiceThread extends Thread implements Runnable {
 					lobbyname = inFromClient.readLine();
 					lobbysize= Integer.parseInt(inFromClient.readLine());
 					lobbypass = inFromClient.readLine();
-					for (int i = 0; ; i++) {
-				        if (lobbies.get(i) == null) {
-				            lobbies.add(i, new GameLobby(lobbyname,lobbypass,lobbysize));
-				            lobbies.get(i).Join(this);
-				            break;
-				          }
-					}
-					//owner of lobby yapılacaklar
-					//will be done from gamelobby
+					
+					int currentLobbySize = lobbies.size();
+					lobbies.add(new GameLobby(lobbyname,lobbypass,lobbysize));
+					lobbies.get(currentLobbySize).Join(this);
+					blockUntilAllPlayersIn(lobbies.get(currentLobbySize));
 					
 				}					
 				else {
 					lobbyname = inFromClient.readLine();
 					lobbysize= Integer.parseInt(inFromClient.readLine());
-					for (int i = 0; ; i++) {
-				        if (lobbies.get(i) == null) {
-				            lobbies.add(i, new GameLobby(lobbyname,lobbysize));
-				            lobbies.get(i).Join(this);
-				            				    		
-				            while(true){	
-				            	if(lobbies.get(i).players.size()==lobbies.get(i).getlobbylimit()){
-				            		for(int emergency=0 ; emergency<lobbies.get(i).players.size() ;emergency++){
-				        				if(lobbies.get(i).players.get(emergency)==this){
-
-				        					serverPrintOut.println("start");
-			        	    	    		String distributionconfirm = inFromClient.readLine();
-			        	    	    		if(distributionconfirm.equals("distribute")){
-			        	    	    			serverPrintOut.println("here are your numbers boye");
-			        	    	    			
-			        	    	    		}    	
-			        	    	    		
-			        	    	    		break;
-				        				}
-				        				
-				        			}
-	        	    	        break;   
-			        			  }//end of inner if      
-			        			  
-				            }//end of while loop		  
-				        	
-				            break;			      				            
-				        }				
-					}
+					int currentLobbySize = lobbies.size();
+					lobbies.add(new GameLobby(lobbyname,lobbypass,lobbysize));
+					lobbies.get(currentLobbySize).Join(this);
+					blockUntilAllPlayersIn(lobbies.get(currentLobbySize));
+				           
 				}
 			} 
 			else
@@ -172,7 +128,13 @@ class ClientServiceThread extends Thread implements Runnable {
 	}//end of roommenuserverside method
 	
 	
-	
+	private void blockUntilAllPlayersIn(GameLobby lobby){
+        while(true){
+            if(lobby.players.size()==lobby.getlobbylimit()){
+                break;
+            }
+        }
+    }
 	public void run() {
 		System.out.println("it seems a client has connected! let's wait for him/her to login or register!");
 		try {
@@ -187,6 +149,11 @@ class ClientServiceThread extends Thread implements Runnable {
 					username=Clientusername;
 					serverPrintOut.println("successfully logged in to system!");
 					RoomMenuServerside();
+					for(GameLobby lobby: lobbies) {
+                    	//might be wrong?
+					    lobby.play();
+                    }
+
 				}
 			}
 			//REGISTER
@@ -199,6 +166,10 @@ class ClientServiceThread extends Thread implements Runnable {
 					username=Clientusername;
 					serverPrintOut.println("successfully registered!");
 					RoomMenuServerside();
+                    for(GameLobby lobby: lobbies) {
+                    	//might be wrong?
+                        lobby.play();
+                    }
 
 				}
 				else if(result.equals("fail"))

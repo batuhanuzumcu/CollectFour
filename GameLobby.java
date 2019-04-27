@@ -50,7 +50,7 @@ public class GameLobby extends Thread{
     	if (players.size() == this.numberofplayers) {
     		// lobby is at limit start the game
     		while(true) {
-    			sendMessageToAllPlayers("4 Players connected, game is starting goodluck!");
+    			sendMessageToAllPlayers("game starts!");
     			
     			// If there are four players, the list is { 1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4 }
     			List<Integer> collectFourInitial = new ArrayList<>();
@@ -67,7 +67,7 @@ public class GameLobby extends Thread{
     				players.get(z).serverPrintOut.println(partitionedConnectFour.get(z));
     			}
     			//finish the game
-    			sendMessageToAllPlayers("Game finished thanks for playing!");
+    			sendMessageToAllPlayers("game ended.");
     			break;
     		}
     	}

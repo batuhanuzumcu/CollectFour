@@ -47,26 +47,22 @@ public class Client implements Runnable  {
 	public void waitforgame(){
 		System.out.println("Time to wait for the game to start!");	
 		try {
+			while(true)
+			{
+				serverRespond=inFromServer.readLine();
+				if(serverRespond == null) { 
+					continue; 
+					} else if(serverRespond.equals("game starts!")) {
+						System.out.println("game is starting now! wow");
+						// handle server choices for game etc
+					} else if(serverRespond.equals("game ended.")){
+						System.out.println("good game!");
+						break;
+				} else {
+					System.out.println(serverRespond);
+				}
+			}
 			
-			serverRespond=inFromServer.readLine();
-			System.out.println(serverRespond);
-			if(serverRespond.equals("start")){
-				
-				//bundan sonrasi bullshit simdilik devamı buradan gelicek oyunun ama
-				System.out.println("finally start arrived!");
-				System.out.println("game is starting now!");
-				os.println("distribute");
-				String getnumbers = inFromServer.readLine();
-				System.out.println(getnumbers);
-				System.out.println("which number do you want to discard=?");
-				String todiscard = input.nextLine();
-				os.println(todiscard);
-				
-			}
-
-			else{
-				System.out.println("something seems wrong...");
-			}
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
