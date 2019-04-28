@@ -29,32 +29,46 @@ public class CollectFourDB {
 	}
 	
 	// Registration for Users
-		public String RegisterData(String clientName, String clientPassword) 
-		{
-			Connection conn = null;
-			try {
-				conn = this.getConnection();
-				Statement s = null;
-				s = conn.createStatement();
-				// DUPLICATE USERNAME CONTROL
-				String usernameControl = "SELECT * FROM users where username='" + clientName + "'";
-				ResultSet rs = s.executeQuery(usernameControl);
-				if (rs.next() == true) {
-					System.out.println("USER NAME ALREADY EXISTS.");
-					return "fail";
-					// IF THE USER NAME IS UNIQUE
-				} else {
-					arr = "INSERT INTO users " + "(username,password) " + "VALUES ('" + clientName + "','" + clientPassword+ "')";
-					s.execute(arr);
-					return "success";
-				}
-				}catch(SQLException e){
-					e.printStackTrace();
-				}
-			return null;
+	public String RegisterData(String clientName, String clientPassword) {
+		Connection conn = null;
+		Statement s = null;
+		Properties connectionProps = new Properties();
+		connectionProps.put("user", clientName);
+		connectionProps.put("password", clientPassword);
+		try {
+			conn = this.getConnection();
+			s = conn.createStatement();
+
+			// DUPLICATE USERNAME CONTROL
+			String usernameControl = "SELECT * FROM users where username='" + clientName + "'";
+			ResultSet rs = s.executeQuery(usernameControl);
+
+			if (rs.next() == true) {
+				System.out.println("It seems that user name is in use");
+				return "USER NAME ALREADY EXISTS";
+			}
+			// IF THE USER NAME IS UNIQUE
+			else {
+				arr = "INSERT INTO users " + "(username,password) " + "VALUES ('" + clientName + "','" + clientPassword+ "')";
+				s.execute(arr);
+				return "success";
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
+		try {
+			if (s != null) {
+				s.close();
+				conn.close();
+			}
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		}
+		return null;
+	}
 	
-	public String Login(String username,String password) {
+	public String Login(String clientName, String clientPass) {
 		// Connect to MySQL
 		Connection conn = null;
 		try {
@@ -64,23 +78,21 @@ public class CollectFourDB {
 			e.printStackTrace();
 		}
 		try {
-			PreparedStatement st = conn.prepareStatement("SELECT * " + "FROM users "+ "WHERE username LIKE "+ "'%"+username+"%'"+" AND password LIKE "+"'%"+password+"%'");
+			// get login information
+			String sql = "SELECT * FROM users WHERE username=? and password=?";
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setString(1, clientName);
+			st.setString(2, clientPass);
 			// We write a query to get the data from the table.
 			ResultSet rs = st.executeQuery();
-			status =rs.next();
-
-		//	arr = null;
-		//	arr2 = null;
-
-			//TO CHECK IF USER ENTERS HIS/HER INFORMATIONS CORRECTLY OR NOT
+			status = rs.next();
+			// TO CHECK IF USER ENTERS HIS/HER INFORMATIONS CORRECTLY OR NOT
 			if (!status) {
-			        System.out.println("wrong username and/or password entered. Please try again.");
-			    return "fail";
+				System.out.println("wrong username and/or password entered. Please try again.");
+				return "TRY AGAIN";
 			}
-
 			return "success";
-		}
-		catch (SQLException e) {
+		} catch (SQLException e) {
 			System.out.println("ERROR: Could not connect the table");
 			e.printStackTrace();
 			return ("failed to get a username from table");

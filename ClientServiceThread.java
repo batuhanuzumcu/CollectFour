@@ -25,6 +25,7 @@ class ClientServiceThread extends Thread implements Runnable {
 	int tobechanged;
 	int playerscore;
 	boolean receivedscore;
+	boolean lobbyexists;
     
 	ClientServiceThread(Socket s, CollectFourDB database, ArrayList<ClientServiceThread> threads,ArrayList<GameLobby> lobbies) {
 		socket = s;
@@ -32,6 +33,7 @@ class ClientServiceThread extends Thread implements Runnable {
 		this.threads = threads;
 		this.lobbies = lobbies;
 		playerscore=0;
+		lobbyexists=false;
 		try {
 			inFromClient = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			serverPrintOut = new PrintWriter(socket.getOutputStream(), true);
@@ -95,13 +97,14 @@ class ClientServiceThread extends Thread implements Runnable {
 	
 	public void RoomMenuServerside() {
 
-		System.out.println("Welcome! It seems someone has reached to the lobby creation/joining menu");
+		serverPrintOut.println("Welcome to the Lobby !");
+		serverPrintOut.println("Please type in 1 to JOIN A ROOM or 2 to CREATE A NEW ROOM: ");
 		try {
 			String clientChoice = inFromClient.readLine();
 			
 			// JOIN ROOM
 			if (clientChoice.equals("1")) {
-				System.out.println("it seems that joining operation is selected");
+				//joining operation is selected
 
 				lobbylist();
 				
@@ -109,27 +112,41 @@ class ClientServiceThread extends Thread implements Runnable {
 				
 				for (int i = 0; i<lobbies.size() ; i++) {
 			        if (lobbies.get(i).getLobbyName().equals(lobbyname) ) {
-			        	System.out.println("there is a lobby existing with that name! Checking if it has a password...");
+			        	lobbyexists=true;
+						serverPrintOut.println("The lobby with that name is available! Checking if it has a password...");
 			    
-			        	if(lobbies.get(i).getLobbyPassword().isEmpty()){
+			        	if(lobbies.get(i).getLobbyPassword().equals("jeoghj0r4tugjrıgjemja034ı")){
 			        		serverPrintOut.println("no password");
-			        		System.out.println("it doesn't have a password! Joining to lobby...");
+			        		//it doesn't have a password! Joining to lobby...
 				        	lobbies.get(i).Join(this);
 			        	}
 			        	else{
 			        		serverPrintOut.println("has password");
 			        		if(inFromClient.readLine().equals(lobbies.get(i).getLobbyPassword())){
-			        			System.out.println("correct password entered! Player can join to the lobby.");
+			        			serverPrintOut.println("correct password entered! Joining to the lobby...");
+			        			//correct password entered! Player can join to the lobby
 					        	lobbies.get(i).Join(this);
 			        		}
 			        		else{
-			        			System.out.println("wrong password entered by user!");
+			        			//wrong password entered by user!"
+			        			while(true){
+				        			serverPrintOut.println("you entered the wrong password! Please enter again.");
+			        				if(inFromClient.readLine().equals(lobbies.get(i).getLobbyPassword())){
+			        					serverPrintOut.println("correct password entered! Joining to the lobby...");
+					        			//correct password entered! Player can join to the lobby
+							        	lobbies.get(i).Join(this);
+							        	break;
+					        		}
+			        			}
 			        		}
 			        	}
 
 			        	blockUntilAllPlayersIn(lobbies.get(i));
 			          }
 			}//end of loop
+				if(lobbyexists==false){
+					serverPrintOut.println("No such lobby exists! Quitting...");
+				}
 				
 			}
 			
@@ -153,14 +170,15 @@ class ClientServiceThread extends Thread implements Runnable {
 					lobbyname = inFromClient.readLine();
 					lobbysize= Integer.parseInt(inFromClient.readLine());
 					int currentLobbySize = lobbies.size();
-					lobbies.add(new GameLobby(lobbyname,lobbypass,lobbysize));
+					lobbies.add(new GameLobby(lobbyname,lobbysize));
 					lobbies.get(currentLobbySize).Join(this);
 					blockUntilAllPlayersIn(lobbies.get(currentLobbySize));
 				           
 				}
+				
 			} 
 			else
-				System.out.println("Invalid choice has been entered.");
+				System.out.println("Invalid choice has been entered by the client. Removing the client now.");
 
 		} // end of try
 		catch (IOException e) {
@@ -178,68 +196,97 @@ class ClientServiceThread extends Thread implements Runnable {
             }
         }
     }
+
 	public void run() {
 		System.out.println("it seems a client has connected! let's wait for him/her to login or register!");
 		try {
-			String clientChoice=inFromClient.readLine();
-			
-			if(clientChoice.equals("1")){
+			String clientChoice = inFromClient.readLine();
+
+			if (clientChoice.equals("1")) {
 				System.out.println("it seems that login operation is selected");
-				String Clientusername=inFromClient.readLine();
-				String Clientpassword=inFromClient.readLine();
-				String result=db.Login(Clientusername, Clientpassword);
-				if(result.equals("success")){
-					username=Clientusername;
+				String Clientusername = inFromClient.readLine();
+				String Clientpassword = inFromClient.readLine();
+				String result = db.Login(Clientusername, Clientpassword);
+				System.out.println(result);
+				if (result.equals("success")) {
+					username = Clientusername;
 					serverPrintOut.println("successfully logged in to system!");
 					RoomMenuServerside();
-					for(GameLobby lobby: lobbies) {
-                    	//might be wrong?
-					    lobby.play();
-                    }
+					for(int u=0; u<lobbies.size(); u++){
+						if(lobbies.get(u).getLobbyName().equals(lobbyname)){
+							lobbies.get(u).play();
+						}
+					}
+					
+					
+				} else if (result.equals("TRY AGAIN")) {
+					serverPrintOut.println("TRY AGAIN");
+					Clientusername = inFromClient.readLine();
+					Clientpassword = inFromClient.readLine();
+					result = db.Login(Clientusername, Clientpassword);
+					serverPrintOut.println(result);
+					System.out.println(result);
 
-				}
-			}
-			//REGISTER
-			else if(clientChoice.equals("2")) {
-				System.out.println("It seems that register operation is selected");
-				String Clientusername=inFromClient.readLine();
-				String Clientpassword=inFromClient.readLine();
-				String result=db.RegisterData(Clientusername,Clientpassword);
-				if(result.equals("success")) {
-					username=Clientusername;
-					serverPrintOut.println("successfully registered!");
+					// while user trying to enter his/her informations
+					// incorrectly
+					while (result.equals("TRY AGAIN")) {
+						Clientusername = inFromClient.readLine();
+						Clientpassword = inFromClient.readLine();
+						result = db.Login(Clientusername, Clientpassword);
+						serverPrintOut.println(result);
+
+					}
+					// when username and password is okay
+					serverPrintOut.println("Successfully logged in to system!");
 					RoomMenuServerside();
-                    for(GameLobby lobby: lobbies) {
-                    	//might be wrong?
-                        lobby.play();
-                    }
+					for(int u=0; u<lobbies.size(); u++){
+						if(lobbies.get(u).getLobbyName().equals(lobbyname)){
+							lobbies.get(u).play();
+						}
+					}
+				}
+			}
+
+			// REGISTER
+			else if (clientChoice.equals("2")) {
+				System.out.println("It seems that register operation is selected");
+				String Clientusername = inFromClient.readLine();
+				String Clientpassword = inFromClient.readLine();
+				String result = db.RegisterData(Clientusername, Clientpassword);
+				if (result.equals("success")) {
+					username = Clientusername;
+					serverPrintOut.println("successfully registered!");
+					
+					
+				} else if (result.equals("USER NAME ALREADY EXISTS")) {
+					serverPrintOut.println("Failed to register, please try again!");
+					Clientusername = inFromClient.readLine();
+					Clientpassword = inFromClient.readLine();
+					result = db.RegisterData(Clientusername, Clientpassword);
+					serverPrintOut.println(result);
+					// while user trying to enter unavailable username
+					while (result.equals("USER NAME ALREADY EXISTS")) {
+						Clientusername = inFromClient.readLine();
+						Clientpassword = inFromClient.readLine();
+						result = db.RegisterData(Clientusername, Clientpassword);
+						serverPrintOut.println(result);
+					}
+					// when username is available, user can register
+					serverPrintOut.println("Successfully registered!");
 
 				}
-				else if(result.equals("fail"))
-				{
-					serverPrintOut.println("failed to register!");	
-					Clientusername=inFromClient.readLine();
-                    Clientpassword=inFromClient.readLine();
-                    result=db.RegisterData(Clientusername,Clientpassword);
-                    serverPrintOut.println(result);
-                    
-                    while(result.equals("fail")) {
-                        Clientusername=inFromClient.readLine();
-                        Clientpassword=inFromClient.readLine();
-                        result=db.RegisterData(Clientusername,Clientpassword);
-                        serverPrintOut.println(result);
-                    }
-				}				
+
 			}
+			// if user enters invalid choice (except 1 and 2)
 			else
-				System.out.println("Invalid choice has been entered.");
-			System.exit(0);
+				serverPrintOut.println("Invalid choice has been entered. Quitting...");
 			
-		}//end of try
+
+		} // end of try
 		catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}//end of catch
-		
-	}//end of run
+		} // end of catch
+
+	}// end of run
    }//end of inner class

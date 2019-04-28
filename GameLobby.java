@@ -36,6 +36,7 @@ public class GameLobby extends Thread{
 
     public GameLobby(String name, int lobbylimit){
     	lobbyname=name;
+    	lobbypassword="jeoghj0r4tugjrıgjemja034ı";
     	playercounter=0;
         numberofplayers=lobbylimit;
         TurnEnded=0;

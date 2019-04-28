@@ -82,8 +82,13 @@ public class Client implements Runnable {
 	}
 
 	public void RoomMenuClientside() {
-		System.out.println("Welcome to the Lobby !");
-		System.out.println("Please type in 1 to JOIN A ROOM or 2 to CREATE A NEW ROOM: ");
+		try {
+			System.out.println(inFromServer.readLine());
+			System.out.println(inFromServer.readLine());
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		int choice = input.nextInt();
 		input.nextLine();
 		os.println(choice);
@@ -91,31 +96,47 @@ public class Client implements Runnable {
 		if (choice == 1) {
 			System.out.println("it seems you chose the join operation");
 			System.out.println("Here are the lobbies that are currently open: ");
+			System.out.println("  ");
 			getlobbylist();
+			
 			System.out.println("Please enter the name of the lobby you want to join:");
 			String joinname = input.nextLine();
 			os.println(joinname);
+			
+			try {
+				String lobbynamecontrol=inFromServer.readLine();
+				System.out.println(lobbynamecontrol);
+				if(lobbynamecontrol.equals("No such lobby exists! Quitting...")){
+					System.exit(0);
+				}
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 
 			try {
 				String lobbyhaspassword = inFromServer.readLine();
 				if (lobbyhaspassword.equals("no password")) {
 					System.out.println("it seems that this lobby has no password! Joining to lobby now.");
 
-					// joinlendikten sonra yapılacaklar
-
-					waitforgame();
-
 				} else if (lobbyhaspassword.equals("has password")) {
 					System.out.println("it seems that this lobby has a password!");
 					System.out.println("Please enter the password to continue: ");
 					String joinpass = input.nextLine();
 					os.println(joinpass);
-
-					// joinlendikten sonra yapılacaklar
-
-					waitforgame();
-
+					String controllobbypass = inFromServer.readLine();
+					System.out.println(controllobbypass);
+					while(controllobbypass.equals("you entered the wrong password! Please enter again.")){
+						joinpass=input.nextLine();
+						os.println(joinpass);
+						controllobbypass = inFromServer.readLine();
+						System.out.println(controllobbypass);
+					}
 				}
+				
+			//to be done after joining to a lobby
+				waitforgame();
+				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -149,6 +170,9 @@ public class Client implements Runnable {
 			System.out.println("everything is prepared!");
 			waitforgame();
 
+		}else{
+			System.out.println("You entered an invalid choice! Quitting...");
+			System.exit(0);
 		}
 	}
 
@@ -189,21 +213,41 @@ public class Client implements Runnable {
 			password = input.nextLine();
 			os.println(username);
 			os.println(password);
-
+			
 			try {
 				serverRespond = inFromServer.readLine();
 				System.out.println(serverRespond);
-
+				
 				if (serverRespond.equals("successfully logged in to system!")) {
 					RoomMenuClientside();
-				} else
-					System.exit(0);
-
+					
+				} else if (serverRespond.equals("TRY AGAIN")) {
+					System.out.println("please enter your username: ");
+					username = input.nextLine();
+					System.out.println("please enter your password: ");
+					password = input.nextLine();
+					os.println(username);
+					os.println(password);
+					serverRespond = inFromServer.readLine();
+					System.out.println(serverRespond);
+					
+					while (serverRespond.equals("TRY AGAIN")) {
+						System.out.println("please enter your username: ");
+						username = input.nextLine();
+						System.out.println("please enter your password: ");
+						password = input.nextLine();
+						os.println(username);
+						os.println(password);
+						serverRespond = inFromServer.readLine();
+					}
+					serverRespond = inFromServer.readLine();
+					System.out.println(serverRespond);
+					RoomMenuClientside();
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
-
 		// Request for registration
 		else if (choice == 2) {
 			System.out.println("Please create a user name: ");
@@ -212,48 +256,53 @@ public class Client implements Runnable {
 			password = input.nextLine();
 			os.println(username);
 			os.println(password);
-
+			
 			try {
 				serverRespond = inFromServer.readLine();
 				System.out.println(serverRespond);
-
 				if (serverRespond.equals("successfully registered!")) {
-					RoomMenuClientside();
-				} else if (serverRespond.equals("failed to register!")) {
+					System.out.println("Now please re-join to login with your account!");
+					System.exit(0);
+					
+				} else if (serverRespond.equals("Failed to register, please try again!")) {
 
-					System.out.println("Please create new user name: ");
+					System.out.println("Please create new user name, again: ");
 					username = input.nextLine();
-					System.out.println("Please create new password: ");
+					System.out.println("Please create new password, again: ");
 					password = input.nextLine();
 					os.println(username);
 					os.println(password);
 					serverRespond = inFromServer.readLine();
 					System.out.println(serverRespond);
 
-					while (serverRespond.equals("fail")) {
-						System.out.println("Please create new user name: ");
+					while (serverRespond.equals("USER NAME ALREADY EXISTS")) {
+						System.out.println("Please create new user name, again: ");
 						username = input.nextLine();
-						System.out.println("Please create new password: ");
+						System.out.println("Please create new password, again: ");
 						password = input.nextLine();
 						os.println(username);
 						os.println(password);
 						serverRespond = inFromServer.readLine();
+						System.out.println(serverRespond);
 					}
-					System.out.println("finally registered successfully!");
-					RoomMenuClientside();
+					serverRespond = inFromServer.readLine();
+					System.out.println(serverRespond);
+					System.out.println("Now please re-join to login with your account!");
+					System.exit(0);
 
 				} else
 					System.exit(0);
-
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		} else {
-			System.out.println("Incorrect input! exiting...");
-			// serverRespond = inFromServer.readLine();
-			// System.out.println(serverRespond);
-			System.exit(0);
+			try {
+				serverRespond = inFromServer.readLine();
+				System.out.println(serverRespond);
+				System.exit(0);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
-
 	}// end of run
 }// end of class
