@@ -166,7 +166,7 @@ public class GameLobby extends Thread{
     	scoretobeadded=numberofplayers;
     	
     	if(discarded.size()!=0){
-			for(int t=0 ; t<discarded.size() ; t++){
+			for(int t=0 ; t<numberofplayers ; t++){
 				discarded.remove(0);			
 			}	
 		}
