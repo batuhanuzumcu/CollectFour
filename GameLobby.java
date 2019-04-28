@@ -16,7 +16,7 @@ public class GameLobby extends Thread{
 	int clientparseInt;
 	int TurnEnded;
 	boolean FlagForBingo;
-	boolean gotonextround;
+//	boolean gotonextround;
 	boolean passedrequiredscore;
 	int requiredScore;
 	int scoretobeadded;
@@ -59,6 +59,27 @@ public class GameLobby extends Thread{
     		sendMessageToAllPlayers(players.get(a).getplayername());
     	}
     	
+    }
+    
+    //to give a fresh for next potential round.
+    public void setnewplayerdecks(){
+    	// If there are four players, the list is { 1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4 }
+		List<Integer> collectFourInitial = new ArrayList<>();
+		for (int i=1 ; i <= players.size(); i++) {
+			collectFourInitial.addAll(Collections.nCopies(4, i));
+		}  			
+		// shuffle the whole list
+		Collections.shuffle(collectFourInitial);
+		// partition the list
+		List<List<Integer>> partitionedCollectFour = partitionedCollectFour(collectFourInitial);
+		
+		//Show the initial deck to players
+		for (int z=0; z < players.size(); z++) {
+			// send each player their numbers
+			players.get(z).serverPrintOut.println(partitionedCollectFour.get(z));
+		}
+		//Set initial decks to players
+		SetDecksToPlayers(partitionedCollectFour);
     }
     
     public void play() {
@@ -106,7 +127,7 @@ public class GameLobby extends Thread{
     			
     			while(passedrequiredscore==false){
         			GameRounds();
-	}
+    			}
 
     			//finish the game
     			sendMessageToAllPlayers("it seems that a player has passed the required points for victory.");
@@ -161,7 +182,7 @@ public class GameLobby extends Thread{
    
     private void GameRounds(){
     	//initialize stuff
-    	gotonextround=false;
+//    	gotonextround=false;
     	TurnEnded=0;
     	scoretobeadded=numberofplayers;
     	
@@ -174,11 +195,8 @@ public class GameLobby extends Thread{
     	for(int v=0; v<players.size(); v++){
     		players.get(v).setreceivedScore(false);
     	}
-    	
-    	//the operations to check if someone is at bingo state or not is in this method
-    		checkbingostate();   
     		
-    	if(gotonextround==false){
+//    	if(gotonextround==false){
     		//start the discard operation
         	sendMessageToAllPlayers("Please choose a number to discard from your deck: ");
     		sendMessageToAllPlayers("Send input");
@@ -221,7 +239,11 @@ public class GameLobby extends Thread{
     			players.get(h).changedeckvalue(players.get(h).getnumbertochange(),discarded.get(h));
     			players.get(h).serverPrintOut.println(players.get(h).getplayerdeck());
     		}
-    		}//if go to next round is false continue doing these operations inside!
+ //   		}//if go to next round is false continue doing these operations inside!
+    	
+
+    	//the operations to check if someone is at bingo state or not is in this method
+    		checkbingostate();   
     	
     	   }//end of gamerounds method
     
@@ -283,7 +305,7 @@ public class GameLobby extends Thread{
     	}
     	
     	  	if(FlagForBingo==true){
-    	  		gotonextround=true;
+//    	  		gotonextround=true;
     	  		sendMessageToAllPlayersExceptBingo("it seems someone reached bingo! type 'bingo' fast to get most points: ");
 				sendMessageToAllPlayersExceptBingo("Send Bingo Input:");		
 			for(int o=0; o<players.size(); o++){				
@@ -315,6 +337,7 @@ public class GameLobby extends Thread{
         			}// end of while loop  					
 					
 				}
+			
 			}
 			
 			//point to wait for other players
@@ -325,6 +348,7 @@ public class GameLobby extends Thread{
 			}
 			//after everyone types in bingos
 			sendMessageToAllPlayers("here are the scores at the end of this round: ");
+			setplayersnewdecks();
 			for(int y = 0 ; y<players.size(); y++){
 	    		sendMessageToAllPlayers(players.get(y).getplayername()+"'s score is "+players.get(y).getscore());
 	    		if(players.get(y).getscore()>=requiredScore){
