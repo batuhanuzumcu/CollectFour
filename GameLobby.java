@@ -133,6 +133,14 @@ public class GameLobby extends Thread{
 		}
     }
     
+    private void sendMessageToAllPlayersExceptBingo(String message){
+    	for (ClientServiceThread player : players){
+			if(player.getreceivedScore()==false){
+	    		player.serverPrintOut.println(message);
+			}
+    	}
+    }
+    
     private List<List<Integer>> partitionedCollectFour(List<Integer> originalList) {
     	final int chunkSize = 4;
     	List<List<Integer>> partitions = new ArrayList<List<Integer>>();
@@ -228,20 +236,18 @@ public class GameLobby extends Thread{
     	
     	for(int j=0 ; j<players.size() ; j++){	
     		for(int l=0 ; l<numberofplayers ; l++){
-    			
-    			//su noktadan sonra herkeste kondisyon saglandı?
+
     			if(players.get(j).getplayerdeck().equals(potentialwinconditions.get(l))){
     				players.get(j).serverPrintOut.println("You can say bingo now! :");
-
+    				players.get(j).serverPrintOut.println("Send Bingo Input:");
+    				try {
+						clientinput=players.get(j).inFromClient.readLine();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
     				//if a players deck is at winning condition
-    				while(true){//start of while loop	
-        				players.get(j).serverPrintOut.println("Send Bingo Input:");
-						try {
-							clientinput=players.get(j).inFromClient.readLine();
-						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
+    				while(true){//start of while loop
         				 if(clientinput.equals("bingo")){
         					players.get(j).addtoscore(scoretobeadded);
  		    				scoretobeadded--;
@@ -253,12 +259,18 @@ public class GameLobby extends Thread{
         					break;       				
         				} else {
         					players.get(j).serverPrintOut.println("Incorrect input! Send again please:");
+        					players.get(j).serverPrintOut.println("Send Bingo Input:");
+        					try {
+        						clientinput = players.get(j).inFromClient.readLine();
+        					} catch (IOException e) {
+        						// TODO Auto-generated catch block
+        						e.printStackTrace();
+        					}
         									
         				}							
         			}// end of while loop   
-    				
-    				
-        		}
+    					
+        		break;}
     		}
     		bingocontrolled++;
     	}
@@ -269,20 +281,21 @@ public class GameLobby extends Thread{
     			break;
     		}
     	}
+    	
     	  	if(FlagForBingo==true){
     	  		gotonextround=true;
-			for(int o=0; o<players.size(); o++){
+    	  		sendMessageToAllPlayersExceptBingo("it seems someone reached bingo! type 'bingo' fast to get most points: ");
+				sendMessageToAllPlayersExceptBingo("Send Bingo Input:");		
+			for(int o=0; o<players.size(); o++){				
 				if(players.get(o).getreceivedScore()==false){
-    				players.get(o).serverPrintOut.println("it seems someone reached bingo! type 'bingo' fast to get most points: ");
-    				
+    				try {
+						clientinput=players.get(o).inFromClient.readLine();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+
 					while(true){//start of while loop	
-        				players.get(o).serverPrintOut.println("Send Bingo Input:");
-						try {
-							clientinput=players.get(o).inFromClient.readLine();
-						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
         				 if(clientinput.equals("bingo")){
         					players.get(o).addtoscore(scoretobeadded);
  		    				scoretobeadded--;
@@ -296,7 +309,6 @@ public class GameLobby extends Thread{
         					try {
         						clientinput = players.get(o).inFromClient.readLine();
         					} catch (IOException e) {
-        						// TODO Auto-generated catch block
         						e.printStackTrace();
         					}				
         				}							

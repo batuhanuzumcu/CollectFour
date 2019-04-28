@@ -65,6 +65,7 @@ public class Client implements Runnable {
 					os.println(chosennumber);
 					
 				} else if (serverRespond.equals("Send Bingo Input:")){
+					input.nextLine();
 					typebingo=input.nextLine();
 					os.println(typebingo);
 					
