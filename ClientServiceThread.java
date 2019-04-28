@@ -203,12 +203,21 @@ class ClientServiceThread extends Thread implements Runnable {
 			String clientChoice = inFromClient.readLine();
 
 			if (clientChoice.equals("1")) {
-				System.out.println("it seems that login operation is selected");
+				//it seems that login operation is selected
 				String Clientusername = inFromClient.readLine();
 				String Clientpassword = inFromClient.readLine();
+				
+				//check to see if the user is logged in or not.
+				for(int p=0; p<threads.size(); p++){
+					if(Clientusername.equals(threads.get(p).username)){
+					serverPrintOut.println("The account you are trying to enter is already logged in. Quitting...");
+					
+					}
+				}
+				
 				String result = db.Login(Clientusername, Clientpassword);
 				System.out.println(result);
-				if (result.equals("success")) {
+				if (result.equals("success")) {				
 					username = Clientusername;
 					serverPrintOut.println("successfully logged in to system!");
 					RoomMenuServerside();
@@ -237,6 +246,7 @@ class ClientServiceThread extends Thread implements Runnable {
 
 					}
 					// when username and password is okay
+					username = Clientusername;
 					serverPrintOut.println("Successfully logged in to system!");
 					RoomMenuServerside();
 					for(int u=0; u<lobbies.size(); u++){

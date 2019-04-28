@@ -206,9 +206,8 @@ public class Client implements Runnable {
 
 		// Request for login
 		if (choice == 1) {
-
 			System.out.println("please enter your username: ");
-			username = input.nextLine();
+			username = input.nextLine();			
 			System.out.println("please enter your password: ");
 			password = input.nextLine();
 			os.println(username);
@@ -220,6 +219,9 @@ public class Client implements Runnable {
 				
 				if (serverRespond.equals("successfully logged in to system!")) {
 					RoomMenuClientside();
+					
+				} else if(serverRespond.equals("The account you are trying to enter is already logged in. Quitting...")) {
+					System.exit(0);
 					
 				} else if (serverRespond.equals("TRY AGAIN")) {
 					System.out.println("please enter your username: ");
