@@ -115,7 +115,7 @@ class ClientServiceThread extends Thread implements Runnable {
 			        	lobbyexists=true;
 						serverPrintOut.println("The lobby with that name is available! Checking if it has a password...");
 			    
-			        	if(lobbies.get(i).getLobbyPassword().equals("jeoghj0r4tugjrıgjemja034ı")){
+			        	if(lobbies.get(i).getLobbyPassword().equals("jeoghhgdfheshr24te32451dfs")){
 			        		serverPrintOut.println("no password");
 			        		//it doesn't have a password! Joining to lobby...
 				        	lobbies.get(i).Join(this);

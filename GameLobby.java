@@ -37,7 +37,8 @@ public class GameLobby extends Thread{
 
     public GameLobby(String name, int lobbylimit){
     	lobbyname=name;
-    	lobbypassword="jeoghj0r4tugjrıgjemja034ı";
+    	//secret input for no password lobby.
+    	lobbypassword="jeoghhgdfheshr24te32451dfs";
     	playercounter=0;
         numberofplayers=lobbylimit;
         TurnEnded=0;
@@ -63,7 +64,7 @@ public class GameLobby extends Thread{
     	
     }
     
-    //to give a fresh for next potential round.
+    //to give a fresh deck for next potential round.
     public void setnewplayerdecks(){
     	// If there are four players, the list is { 1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4 }
 		List<Integer> collectFourInitial = new ArrayList<>();
@@ -170,7 +171,6 @@ public class GameLobby extends Thread{
    
     private void GameRounds(){
     	//initialize stuff
-//    	gotonextround=false;
     	TurnEnded=0;
     	scoretobeadded=numberofplayers;
     	
@@ -236,14 +236,14 @@ public class GameLobby extends Thread{
     //method to check if someone is ready for bingo
     public void checkbingostate(){
     	
-    	//Check if someone reached bingo state!
+    	//initialize bingo checkers.
     	bingocontrolled=0;
     	waitforbingoinput=0;
     	FlagForBingo=false;
     	
     	for(int j=0 ; j<players.size() ; j++){	
     		for(int l=0 ; l<numberofplayers ; l++){
-
+    			//Check if someone reached bingo state!
     			if(players.get(j).getplayerdeck().equals(potentialwinconditions.get(l))){
     				players.get(j).serverPrintOut.println("You can say bingo now! :");
     				players.get(j).serverPrintOut.println("Send Bingo Input:");
