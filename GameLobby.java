@@ -80,6 +80,8 @@ public class GameLobby extends Thread{
 		}
 		//Set initial decks to players
 		SetDecksToPlayers(partitionedCollectFour);
+		
+		sendMessageToAllPlayers("Now that everyone has seen their decks, time to begin! ");
     }
     
     public void play() {
@@ -104,27 +106,10 @@ public class GameLobby extends Thread{
     			//partition the win conditions
     			potentialwinconditions = partitionedCollectFour(winConditionInitial);
     			
-    			// If there are four players, the list is { 1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4 }
-    			List<Integer> collectFourInitial = new ArrayList<>();
-    			for (int i=1 ; i <= players.size(); i++) {
-    				collectFourInitial.addAll(Collections.nCopies(4, i));
-    			}  			
-    			// shuffle the whole list
-    			Collections.shuffle(collectFourInitial);
-    			// partition the list
-    			List<List<Integer>> partitionedCollectFour = partitionedCollectFour(collectFourInitial);
+    			//prepare player decks and show them
+    			setnewplayerdecks();
     			
-    			//Show the initial deck to players
-    			for (int z=0; z < players.size(); z++) {
-    				// send each player their numbers
-    				players.get(z).serverPrintOut.println(partitionedCollectFour.get(z));
-    			}
-    			//Set initial decks to players
-    			SetDecksToPlayers(partitionedCollectFour);
-    			
-    			sendMessageToAllPlayers("Now that everyone has seen their decks, time to begin! ");
     			//game will be played using rounds:
-    			
     			while(passedrequiredscore==false){
         			GameRounds();
     			}
@@ -348,13 +333,16 @@ public class GameLobby extends Thread{
 			}
 			//after everyone types in bingos
 			sendMessageToAllPlayers("here are the scores at the end of this round: ");
-			setplayersnewdecks();
 			for(int y = 0 ; y<players.size(); y++){
 	    		sendMessageToAllPlayers(players.get(y).getplayername()+"'s score is "+players.get(y).getscore());
 	    		if(players.get(y).getscore()>=requiredScore){
 	    			passedrequiredscore=true;
 	    		}
 	    	}
+			//to set a new deck to continue playing if they didn't pass the required score.
+			if(passedrequiredscore!=true){
+				setnewplayerdecks();
+			}
 			
 		} 
     	
