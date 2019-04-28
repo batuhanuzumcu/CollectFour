@@ -16,8 +16,12 @@ public class GameLobby extends Thread{
 	int clientparseInt;
 	int TurnEnded;
 	boolean FlagForBingo;
+	boolean gotonextround;
+	boolean passedrequiredscore;
 	int requiredScore;
 	int scoretobeadded;
+	int bingocontrolled;
+	int waitforbingoinput;
 	List<Integer> discarded = new ArrayList<Integer>();
 	List<List<Integer>> potentialwinconditions;
     
@@ -66,6 +70,8 @@ public class GameLobby extends Thread{
     			
     			//set initial bingo condition to false and set score condition
     			FlagForBingo = false;
+    			passedrequiredscore=false;
+    			bingocontrolled = 0;
     			requiredScore = numberofplayers*numberofplayers;
     			scoretobeadded=numberofplayers;
     			
@@ -97,7 +103,10 @@ public class GameLobby extends Thread{
     			
     			sendMessageToAllPlayers("Now that everyone has seen their decks, time to begin! ");
     			//game will be played using rounds:
+    			
+    			while(passedrequiredscore==false){
         			GameRounds();
+	}
 
     			//finish the game
     			sendMessageToAllPlayers("it seems that a player has passed the required points for victory.");
@@ -144,98 +153,175 @@ public class GameLobby extends Thread{
    
     private void GameRounds(){
     	//initialize stuff
+    	gotonextround=false;
     	TurnEnded=0;
     	scoretobeadded=numberofplayers;
+    	
     	if(discarded.size()!=0){
 			for(int t=0 ; t<discarded.size() ; t++){
 				discarded.remove(0);			
 			}	
 		}
+    	//initialize receiving scores:
+    	for(int v=0; v<players.size(); v++){
+    		players.get(v).setreceivedScore(false);
+    	}
+    	
+    	//the operations to check if someone is at bingo state or not is in this method
+    		checkbingostate();   
+    		
+    	if(gotonextround==false){
+    		//start the discard operation
+        	sendMessageToAllPlayers("Please choose a number to discard from your deck: ");
+    		sendMessageToAllPlayers("Send input");
+    		for(int a=0 ; a<players.size() ; a++){	//start of for loop
+    			try {
+    				clientinput = players.get(a).inFromClient.readLine();		
+    			} catch (IOException e) {
+    				e.printStackTrace();
+    			}		  		
+    			while(true){//start of while loop	
+    				clientparseInt = Integer.parseInt(clientinput);
+    				 if(players.get(a).findnumber(clientparseInt)!=0){
+    					discarded.add(clientparseInt);
+    					TurnEnded++;
+    					break;       				
+    				} else if(players.get(a).findnumber(clientparseInt)==0){
+    					players.get(a).serverPrintOut.println("Incorrect input! Send again please:");
+    					players.get(a).serverPrintOut.println("Send input");
+    					try {
+    						clientinput = players.get(a).inFromClient.readLine();
+    					} catch (IOException e) {
+    						// TODO Auto-generated catch block
+    						e.printStackTrace();
+    					}				
+    				}							
+    			}// end of while loop    				
+    			
+    		}//end of for loop
+    		
+    		//after everyone correctly enters their input for a round:
+    		while(true){
+    			if(TurnEnded==numberofplayers){
+        			Collections.shuffle(discarded);
+        			sendMessageToAllPlayers("now to get your new numbers: ");	    			
+    				break;
+    			}
+    		}
+    		//distribute shuffled discard values!
+    		for(int h=0 ; h<players.size() ; h++){
+    			players.get(h).changedeckvalue(players.get(h).getnumbertochange(),discarded.get(h));
+    			players.get(h).serverPrintOut.println(players.get(h).getplayerdeck());
+    		}
+    		}//if go to next round is false continue doing these operations inside!
+    	
+    	   }//end of gamerounds method
+    
+    
+    //method to check if someone is ready for bingo
+    public void checkbingostate(){
+    	
     	//Check if someone reached bingo state!
+    	bingocontrolled=0;
+    	waitforbingoinput=0;
     	FlagForBingo=false;
     	
     	for(int j=0 ; j<players.size() ; j++){	
     		for(int l=0 ; l<numberofplayers ; l++){
-    			if(players.get(j).getplayerdeck()==potentialwinconditions.get(l)){
+    			
+    			//su noktadan sonra herkeste kondisyon saglandı?
+    			if(players.get(j).getplayerdeck().equals(potentialwinconditions.get(l))){
+    				players.get(j).serverPrintOut.println("You can say bingo now! :");
+
     				//if a players deck is at winning condition
-    				players.get(j).serverPrintOut.println("Send Input");
-    				try {
-						clientinput=players.get(j).inFromClient.readLine();
-						if(clientinput.equals("bingo")){
-		    				players.get(j).addtoscore(scoretobeadded);
-		    				scoretobeadded--;
-		    				players.get(j).setreceivedScore(true);
-		    				players.get(j).serverPrintOut.println("Congrats! Now please wait for other players.");
-		    				FlagForBingo=true;
+    				while(true){//start of while loop	
+        				players.get(j).serverPrintOut.println("Send Bingo Input:");
+						try {
+							clientinput=players.get(j).inFromClient.readLine();
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
 						}
-						else{
-							break;
-						}
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+        				 if(clientinput.equals("bingo")){
+        					players.get(j).addtoscore(scoretobeadded);
+ 		    				scoretobeadded--;
+ 		    				players.get(j).setreceivedScore(true);
+ 		    				players.get(j).serverPrintOut.println("Congrats! Now please wait for other players to say bingo.");
+ 		    				FlagForBingo=true;
+ 		    				waitforbingoinput++;
+ 		    	        	sendMessageToAllPlayers("Bingo was typed! Be quick.");
+        					break;       				
+        				} else {
+        					players.get(j).serverPrintOut.println("Incorrect input! Send again please:");
+        									
+        				}							
+        			}// end of while loop   
+    				
+    				
         		}
     		}
-    		
+    		bingocontrolled++;
     	}
     	
+    	//block other threads so they continue from this point at same time
     	while(true){
-    		if(FlagForBingo==true){
-				sendMessageToAllPlayers("it seems someone reached bingo! type 'bingo' fast to get most points: ");
-
-				
-				
+    		if(bingocontrolled==numberofplayers){
     			break;
-    		}    		
+    		}
     	}
-
-    	
-    	//start the discard operation
-    	sendMessageToAllPlayers("Please choose a number to discard from your deck: ");
-		sendMessageToAllPlayers("Send input");
-		for(int a=0 ; a<players.size() ; a++){	//start of for loop
-			try {
-				clientinput = players.get(a).inFromClient.readLine();		
-			} catch (IOException e) {
-				e.printStackTrace();
-			}		  		
-			while(true){//start of while loop	
-				clientparseInt = Integer.parseInt(clientinput);
-				 if(players.get(a).findnumber(clientparseInt)!=0){
-					discarded.add(clientparseInt);
-					TurnEnded++;
-					break;       				
-				} else if(players.get(a).findnumber(clientparseInt)==0){
-					players.get(a).serverPrintOut.println("Incorrect input! Send again please:");
-					players.get(a).serverPrintOut.println("Send input");
-					try {
-						clientinput = players.get(a).inFromClient.readLine();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}				
-				}							
-			}// end of while loop    				
-			
-		}//end of for loop
-		
-		//after everyone correctly enters their input for a round:
-		while(true){
-			if(TurnEnded==numberofplayers){
-    			Collections.shuffle(discarded);
-    			sendMessageToAllPlayers("now to get your new numbers: ");	    			
-				break;
+    	  	if(FlagForBingo==true){
+    	  		gotonextround=true;
+			for(int o=0; o<players.size(); o++){
+				if(players.get(o).getreceivedScore()==false){
+    				players.get(o).serverPrintOut.println("it seems someone reached bingo! type 'bingo' fast to get most points: ");
+    				
+					while(true){//start of while loop	
+        				players.get(o).serverPrintOut.println("Send Bingo Input:");
+						try {
+							clientinput=players.get(o).inFromClient.readLine();
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+        				 if(clientinput.equals("bingo")){
+        					players.get(o).addtoscore(scoretobeadded);
+ 		    				scoretobeadded--;
+ 		    				players.get(o).setreceivedScore(true);
+ 		    				players.get(o).serverPrintOut.println("Congrats! Now please wait for other players to say bingo.");
+ 		    				waitforbingoinput++;
+        					break;       				
+        				} else {
+        					players.get(o).serverPrintOut.println("Incorrect input! Send again please:");
+        					players.get(o).serverPrintOut.println("Send Bingo Input:");
+        					try {
+        						clientinput = players.get(o).inFromClient.readLine();
+        					} catch (IOException e) {
+        						// TODO Auto-generated catch block
+        						e.printStackTrace();
+        					}				
+        				}							
+        			}// end of while loop  					
+					
+				}
 			}
-		}
-		//distribute shuffled discard values!
-		for(int h=0 ; h<players.size() ; h++){
-			players.get(h).changedeckvalue(players.get(h).getnumbertochange(),discarded.get(h));
-			players.get(h).serverPrintOut.println(players.get(h).getplayerdeck());
-		}
-		
-		
-		
-    }//end of one round method
+			
+			//point to wait for other players
+			while(true){
+				if(waitforbingoinput==numberofplayers){
+					break;
+				}
+			}
+			//after everyone types in bingos
+			sendMessageToAllPlayers("here are the scores at the end of this round: ");
+			for(int y = 0 ; y<players.size(); y++){
+	    		sendMessageToAllPlayers(players.get(y).getplayername()+"'s score is "+players.get(y).getscore());
+	    		if(players.get(y).getscore()>=requiredScore){
+	    			passedrequiredscore=true;
+	    		}
+	    	}
+			
+		} 
+    	
+    }//end of checkbingostate method
     
 }

@@ -64,16 +64,9 @@ public class Client implements Runnable {
 					chosennumber=input.nextInt();
 					os.println(chosennumber);
 					
-				} else if(serverRespond.equals("it seems someone reached bingo! type 'bingo' fast to get most points: ")){
-					System.out.println(serverRespond);
+				} else if (serverRespond.equals("Send Bingo Input:")){
 					typebingo=input.nextLine();
-					while(true){
-						if(typebingo.equals("bingo")){
-							os.println(typebingo);
-							break;
-						 }
-						System.out.println("you typed wrong! please type again");		 	
-					}
+					os.println(typebingo);
 					
 				} else {
 					System.out.println(serverRespond);
