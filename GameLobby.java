@@ -16,8 +16,8 @@ public class GameLobby extends Thread{
 	int clientparseInt;
 	int TurnEnded;
 	boolean FlagForBingo;
-//	boolean gotonextround;
 	boolean passedrequiredscore;
+	boolean gamestarted;
 	int requiredScore;
 	int scoretobeadded;
 	int bingocontrolled;
@@ -31,6 +31,7 @@ public class GameLobby extends Thread{
         playercounter=0;
         numberofplayers=lobbylimit;
         TurnEnded=0;
+        gamestarted=false;
         
     }
 
@@ -40,17 +41,17 @@ public class GameLobby extends Thread{
     	playercounter=0;
         numberofplayers=lobbylimit;
         TurnEnded=0;
+        gamestarted=false;
     }
     
     public int getlobbylimit(){
     	return numberofplayers;
     }
-    
     public void Join(ClientServiceThread a){
-        		
-    	players.add(playercounter, a);
-        		playercounter++;
-    		
+    	if(gamestarted==false){
+   	    	players.add(playercounter, a);
+   	        		playercounter++;	
+    	}
     }
     
     public void CurrentPlayers(){
@@ -90,6 +91,7 @@ public class GameLobby extends Thread{
     		// lobby is at limit start the game
     		while(true) {
     			sendMessageToAllPlayers("game starts!");
+    			gamestarted=true;
     			CurrentPlayers();
     			
     			//set initial bingo condition to false and set score condition
@@ -182,7 +184,6 @@ public class GameLobby extends Thread{
     		players.get(v).setreceivedScore(false);
     	}
     		
-//    	if(gotonextround==false){
     		//start the discard operation
         	sendMessageToAllPlayers("Please choose a number to discard from your deck: ");
     		sendMessageToAllPlayers("Send input");
@@ -225,8 +226,6 @@ public class GameLobby extends Thread{
     			players.get(h).changedeckvalue(players.get(h).getnumbertochange(),discarded.get(h));
     			players.get(h).serverPrintOut.println(players.get(h).getplayerdeck());
     		}
- //   		}//if go to next round is false continue doing these operations inside!
-    	
 
     	//the operations to check if someone is at bingo state or not is in this method
     		checkbingostate();   
@@ -291,7 +290,6 @@ public class GameLobby extends Thread{
     	}
     	
     	  	if(FlagForBingo==true){
-//    	  		gotonextround=true;
     	  		sendMessageToAllPlayersExceptBingo("it seems someone reached bingo! type 'bingo' fast to get most points: ");
 				sendMessageToAllPlayersExceptBingo("Send Bingo Input:");		
 			for(int o=0; o<players.size(); o++){				

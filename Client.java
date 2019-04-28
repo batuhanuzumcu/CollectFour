@@ -106,7 +106,7 @@ public class Client implements Runnable {
 			try {
 				String lobbynamecontrol=inFromServer.readLine();
 				System.out.println(lobbynamecontrol);
-				if(lobbynamecontrol.equals("No such lobby exists! Quitting...")){
+				if(lobbynamecontrol.equals("No such lobby exists! Or it already started. Quitting...")){
 					System.exit(0);
 				}
 			} catch (IOException e1) {

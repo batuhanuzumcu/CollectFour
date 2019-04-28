@@ -87,7 +87,7 @@ class ClientServiceThread extends Thread implements Runnable {
 
 	public void lobbylist(){
 		for(int z=0 ; z<lobbies.size() ; z++){
-			if(lobbies.get(z)!=null){
+			if(lobbies.get(z)!=null && lobbies.get(z).gamestarted==false){
 				serverPrintOut.println(lobbies.get(z).getLobbyName());
 			}
 		}
@@ -111,7 +111,7 @@ class ClientServiceThread extends Thread implements Runnable {
 				lobbyname = inFromClient.readLine();
 				
 				for (int i = 0; i<lobbies.size() ; i++) {
-			        if (lobbies.get(i).getLobbyName().equals(lobbyname) ) {
+			        if (lobbies.get(i).getLobbyName().equals(lobbyname)) {
 			        	lobbyexists=true;
 						serverPrintOut.println("The lobby with that name is available! Checking if it has a password...");
 			    
@@ -145,7 +145,7 @@ class ClientServiceThread extends Thread implements Runnable {
 			          }
 			}//end of loop
 				if(lobbyexists==false){
-					serverPrintOut.println("No such lobby exists! Quitting...");
+					serverPrintOut.println("No such lobby exists! Or it already started. Quitting...");
 				}
 				
 			}
