@@ -17,6 +17,7 @@ public class GameLobby extends Thread{
 	int TurnEnded;
 	boolean FlagForBingo;
 	int requiredScore;
+	int scoretobeadded;
 	List<Integer> discarded = new ArrayList<Integer>();
 	List<List<Integer>> potentialwinconditions;
     
@@ -66,6 +67,7 @@ public class GameLobby extends Thread{
     			//set initial bingo condition to false and set score condition
     			FlagForBingo = false;
     			requiredScore = numberofplayers*numberofplayers;
+    			scoretobeadded=numberofplayers;
     			
     			//prepare win conditions for round
     			List<Integer> winConditionInitial = new ArrayList<>();
@@ -95,11 +97,7 @@ public class GameLobby extends Thread{
     			
     			sendMessageToAllPlayers("Now that everyone has seen their decks, time to begin! ");
     			//game will be played using rounds:
-    			while(true){
-        			GameRound();
-        			//might do break after score checking every time gameround ends.
-        			break;
-    			}
+        			GameRounds();
 
     			//finish the game
     			sendMessageToAllPlayers("it seems that a player has passed the required points for victory.");
@@ -127,12 +125,11 @@ public class GameLobby extends Thread{
     }
     
     private List<List<Integer>> partitionedCollectFour(List<Integer> originalList) {
-    	//prob this method is giving potential size issues for more than 4 players
-    	int partitionSize = this.numberofplayers;
+    	final int chunkSize = 4;
     	List<List<Integer>> partitions = new ArrayList<List<Integer>>();
-    	for (int i = 0; i < originalList.size(); i += partitionSize) {
+    	for (int i = 0; i < originalList.size(); i += chunkSize) {
     	    partitions.add(originalList.subList(i,
-    	            Math.min(i + partitionSize, originalList.size())));
+    	            Math.min(i + chunkSize, originalList.size())));
     	}
     	return partitions;
     }
@@ -145,24 +142,55 @@ public class GameLobby extends Thread{
     }
     
    
-    private void GameRound(){
+    private void GameRounds(){
     	//initialize stuff
     	TurnEnded=0;
+    	scoretobeadded=numberofplayers;
     	if(discarded.size()!=0){
 			for(int t=0 ; t<discarded.size() ; t++){
 				discarded.remove(0);			
 			}	
 		}
     	//Check if someone reached bingo state!
+    	FlagForBingo=false;
+    	
     	for(int j=0 ; j<players.size() ; j++){	
     		for(int l=0 ; l<numberofplayers ; l++){
     			if(players.get(j).getplayerdeck()==potentialwinconditions.get(l)){
-    				FlagForBingo=true;
-    				//yarın bunu dogru yere kurmakla ugras puanlar dagıtılsın xd
+    				//if a players deck is at winning condition
+    				players.get(j).serverPrintOut.println("Send Input");
+    				try {
+						clientinput=players.get(j).inFromClient.readLine();
+						if(clientinput.equals("bingo")){
+		    				players.get(j).addtoscore(scoretobeadded);
+		    				scoretobeadded--;
+		    				players.get(j).setreceivedScore(true);
+		    				players.get(j).serverPrintOut.println("Congrats! Now please wait for other players.");
+		    				FlagForBingo=true;
+						}
+						else{
+							break;
+						}
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
         		}
     		}
     		
     	}
+    	
+    	while(true){
+    		if(FlagForBingo==true){
+				sendMessageToAllPlayers("it seems someone reached bingo! type 'bingo' fast to get most points: ");
+
+				
+				
+    			break;
+    		}    		
+    	}
+
+    	
     	//start the discard operation
     	sendMessageToAllPlayers("Please choose a number to discard from your deck: ");
 		sendMessageToAllPlayers("Send input");
@@ -194,7 +222,7 @@ public class GameLobby extends Thread{
 		
 		//after everyone correctly enters their input for a round:
 		while(true){
-			if(TurnEnded==4){
+			if(TurnEnded==numberofplayers){
     			Collections.shuffle(discarded);
     			sendMessageToAllPlayers("now to get your new numbers: ");	    			
 				break;

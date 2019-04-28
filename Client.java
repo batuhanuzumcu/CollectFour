@@ -13,8 +13,8 @@ public class Client implements Runnable {
 	static Socket clientSocket = null; // The client socket
 	static PrintWriter os = null; // The output stream
 	static BufferedReader inFromServer = null; // The input stream
-	static Scanner input = new Scanner(System.in); // to get connection IP from
-													// user
+	static Scanner input = new Scanner(System.in);
+	String typebingo;
 	String username, password;
 	String serverRespond = null;
 	int chosennumber;
@@ -63,6 +63,17 @@ public class Client implements Runnable {
 				} else if (serverRespond.equals("Send input")){
 					chosennumber=input.nextInt();
 					os.println(chosennumber);
+					
+				} else if(serverRespond.equals("it seems someone reached bingo! type 'bingo' fast to get most points: ")){
+					System.out.println(serverRespond);
+					typebingo=input.nextLine();
+					while(true){
+						if(typebingo.equals("bingo")){
+							os.println(typebingo);
+							break;
+						 }
+						System.out.println("you typed wrong! please type again");		 	
+					}
 					
 				} else {
 					System.out.println(serverRespond);

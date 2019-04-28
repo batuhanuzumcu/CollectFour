@@ -24,6 +24,7 @@ class ClientServiceThread extends Thread implements Runnable {
 	int lobbysize;
 	int tobechanged;
 	int playerscore;
+	boolean receivedscore;
     
 	ClientServiceThread(Socket s, CollectFourDB database, ArrayList<ClientServiceThread> threads,ArrayList<GameLobby> lobbies) {
 		socket = s;
@@ -74,6 +75,13 @@ class ClientServiceThread extends Thread implements Runnable {
 	public int getscore(){
 		return playerscore;
 	}
+	public boolean getreceivedScore(){
+		return receivedscore;
+	}
+	public void setreceivedScore(boolean currentstate){
+		receivedscore=currentstate;
+	}
+	
 
 	public void lobbylist(){
 		for(int z=0 ; z<lobbies.size() ; z++){
